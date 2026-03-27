@@ -210,6 +210,7 @@ This project ships purpose-built agents in `.github/agents/`. Switch to the righ
 | `frontend-builder.agent.md` | Creating pages, components, or forms |
 | `domain-entities.agent.md` | Building the Developer or User Story entity end-to-end |
 | `full-stack.agent.md` | Implementing a complete feature across all layers |
+| `qa.agent.md` | Writing or scaffolding Playwright E2E tests, setting up test DB isolation, mocking Gemini |
 
 **When in doubt, switch to the `navigator` agent first — it will route you to the correct agent.**
 
