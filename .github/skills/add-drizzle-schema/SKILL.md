@@ -110,7 +110,6 @@ export const projects = sqliteTable("projects", {
   id:          int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name:        text("name").notNull(),
   description: text("description"),
-  status:      text("status", { enum: ["active", "archived"] }).notNull().default("active"),
   createdAt:   int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt:   int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
@@ -125,8 +124,8 @@ export const developers = sqliteTable("developers", {
   projectId:     int("project_id", { mode: "number" }).notNull().references(() => projects.id),
   name:          text("name").notNull(),
   role:          text("role", { enum: ["frontend", "backend", "fullstack", "devops", "qa"] }).notNull(),
-  skillset:      text("skillset").notNull(),    // JSON array string: '["React","Node.js"]'
-  capacityHours: real("capacity_hours").notNull().default(80),
+  skillset:      text("skillset").notNull().default("[]"),  // JSON array string: '["React","Node.js"]'
+  capacityHours: int("capacity_hours").notNull().default(70),  // hours per 2-week sprint
   createdAt:     int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt:     int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
@@ -143,7 +142,6 @@ export const userStories = sqliteTable("user_stories", {
   description:        text("description").notNull(),
   acceptanceCriteria: text("acceptance_criteria"),
   priority:           text("priority", { enum: ["low", "medium", "high", "critical"] }).notNull().default("medium"),
-  status:             text("status", { enum: ["pending", "analyzed", "planned"] }).notNull().default("pending"),
   createdAt:          int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt:          int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
@@ -154,18 +152,18 @@ export type NewUserStory = typeof userStories.$inferInsert;
 ### Tasks table (AI-generated sub-tasks)
 ```ts
 export const tasks = sqliteTable("tasks", {
-  id:              int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userStoryId:     int("user_story_id", { mode: "number" }).notNull().references(() => userStories.id),
-  developerId:     int("developer_id", { mode: "number" }).references(() => developers.id),
-  title:           text("title").notNull(),
-  description:     text("description"),
-  layer:           text("layer", { enum: ["backend", "frontend", "database", "infrastructure", "testing", "other"] }).notNull().default("other"),
-  estimatedHours:  real("estimated_hours").notNull(),
-  status:          text("status", { enum: ["unassigned", "assigned", "in_progress", "done"] }).notNull().default("unassigned"),
-  sprintNumber:    int("sprint_number", { mode: "number" }),
-  isAiGenerated:   int("is_ai_generated", { mode: "number" }).notNull().default(1), // 1 = true, 0 = false (SQLite has no boolean)
-  createdAt:       int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt:       int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  id:             int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  userStoryId:    int("user_story_id", { mode: "number" }).notNull().references(() => userStories.id),
+  sprintId:       int("sprint_id", { mode: "number" }).references(() => sprints.id),
+  developerId:    int("developer_id", { mode: "number" }).references(() => developers.id),
+  title:          text("title").notNull(),
+  description:    text("description"),
+  estimatedHours: int("estimated_hours"),
+  status:         text("status", { enum: ["pending", "in_progress", "done", "blocked"] }).notNull().default("pending"),
+  /** Layer hint for sprint dependency ordering */
+  layer:          text("layer"),
+  createdAt:      int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt:      int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 export type Task    = typeof tasks.$inferSelect;
 export type NewTask = typeof tasks.$inferInsert;
@@ -174,34 +172,16 @@ export type NewTask = typeof tasks.$inferInsert;
 ### Sprints table
 ```ts
 export const sprints = sqliteTable("sprints", {
-  id:          int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  projectId:   int("project_id", { mode: "number" }).notNull().references(() => projects.id),
-  sprintNumber: int("sprint_number", { mode: "number" }).notNull(),
-  startDate:   int("start_date", { mode: "timestamp" }),
-  endDate:     int("end_date", { mode: "timestamp" }),
-  totalHours:  real("total_hours").notNull().default(0),
-  status:      text("status", { enum: ["draft", "active", "completed"] }).notNull().default("draft"),
-  createdAt:   int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt:   int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  id:           int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  projectId:    int("project_id", { mode: "number" }).notNull().references(() => projects.id),
+  sprintNumber: int("sprint_number").notNull(),
+  startDate:    int("start_date", { mode: "timestamp" }),
+  endDate:      int("end_date", { mode: "timestamp" }),
+  createdAt:    int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt:    int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 export type Sprint    = typeof sprints.$inferSelect;
 export type NewSprint = typeof sprints.$inferInsert;
-```
-
-### Analysis Runs table (audit log for AI calls)
-```ts
-export const analysisRuns = sqliteTable("analysis_runs", {
-  id:          int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  projectId:   int("project_id", { mode: "number" }).notNull().references(() => projects.id),
-  status:      text("status", { enum: ["pending", "running", "completed", "failed"] }).notNull().default("pending"),
-  prompt:      text("prompt"),       // stored for debugging
-  rawResponse: text("raw_response"), // stored for debugging
-  errorMessage: text("error_message"),
-  createdAt:   int("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt:   int("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-});
-export type AnalysisRun    = typeof analysisRuns.$inferSelect;
-export type NewAnalysisRun = typeof analysisRuns.$inferInsert;
 ```
 
 ---

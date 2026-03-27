@@ -175,9 +175,21 @@ Add to `.env.local` (already gitignored). Never commit this file.
 
 Before writing any code, check whether the task matches an available skill:
 
-| Task                                       | Skill to read                           |
-|--------------------------------------------|-----------------------------------------|
-| Adding or scaffolding any API route handler | `.github/skills/create-api-endpoint.md` |
+| Task                                                                 | Skill to read                                          |
+|----------------------------------------------------------------------|--------------------------------------------------------|
+| Adding or scaffolding any API route handler                          | `.github/skills/create-api-endpoint.md`                |
+| Adding a new DB table or modifying `db/schema.ts`                    | `.github/skills/add-drizzle-schema/SKILL.md`           |
+| Scaffolding a complete CRUD resource (schema + API + page + form)    | `.github/skills/crud-resource/SKILL.md`                |
+| Implementing the Analyze & Estimate AI feature                       | `.github/skills/ai-task-analysis/SKILL.md`             |
+| Adding any Gemini/LLM call or structured prompt                      | `.github/skills/llm-integration/SKILL.md`              |
+| Implementing sprint generation or capacity-packing algorithm         | `.github/skills/sprint-planning/SKILL.md`              |
+| Creating a new Next.js App Router page or route segment              | `.github/skills/create-page/SKILL.md`                  |
+| Building a form with client-side Zod validation                      | `.github/skills/create-form/SKILL.md`                  |
+| Creating a reusable UI component (primitive or domain component)     | `.github/skills/create-ui-component/SKILL.md`          |
+| Adding, modifying, or scaffolding anything related to developers     | `.github/skills/developer-roster/SKILL.md`             |
+| Adding, modifying, or scaffolding anything related to user stories   | `.github/skills/user-story-management/SKILL.md`        |
+| Implementing manual editing, reassignment, or deletion of AI tasks   | `.github/skills/manual-task-override/SKILL.md`         |
+| Building or modifying the sprint board visualization                 | `.github/skills/sprint-board/SKILL.md`                 |
 
 **Always read the full skill file via `read_file` before implementing. Never infer patterns from context alone.**
 
