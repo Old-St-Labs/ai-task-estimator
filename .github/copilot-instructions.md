@@ -175,9 +175,18 @@ Add to `.env.local` (already gitignored). Never commit this file.
 
 Before writing any code, check whether the task matches an available skill:
 
-| Task                                       | Skill to read                           |
-|--------------------------------------------|-----------------------------------------|
-| Adding or scaffolding any API route handler | `.github/skills/create-api-endpoint.md` |
+| Task                                                        | Skill to read                                              |
+|-------------------------------------------------------------|------------------------------------------------------------|
+| Adding or scaffolding any API route handler                 | `.github/skills/create-api-endpoint.md`                    |
+| Adding a new page, layout, loading, or error boundary       | `.github/skills/create-page/SKILL.md`                      |
+| Building a form with validation and API submission          | `.github/skills/create-form/SKILL.md`                      |
+| Creating any reusable UI component                          | `.github/skills/create-ui-component/SKILL.md`              |
+| Adding a full CRUD resource (schema + API + page + form)    | `.github/skills/crud-resource/SKILL.md`                    |
+| Adding a Drizzle table or column to the schema              | `.github/skills/add-drizzle-schema/SKILL.md`               |
+| Integrating Gemini or building an AI prompt                 | `.github/skills/llm-integration/SKILL.md`                  |
+| Implementing or extending the AI task analysis pipeline     | `.github/skills/ai-task-analysis/SKILL.md`                 |
+| Implementing sprint planning or capacity packing            | `.github/skills/sprint-planning/SKILL.md`                  |
+| Any Next.js-specific pattern (async params, RSC boundaries, data fetching, route handlers, error pages, debugging) | `.github/skills/next-best-practices/SKILL.md` |
 
 **Always read the full skill file via `read_file` before implementing. Never infer patterns from context alone.**
 
