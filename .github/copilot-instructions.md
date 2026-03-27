@@ -178,8 +178,39 @@ Before writing any code, check whether the task matches an available skill:
 | Task                                       | Skill to read                           |
 |--------------------------------------------|-----------------------------------------|
 | Adding or scaffolding any API route handler | `.github/skills/create-api-endpoint.md` |
+| Adding a new SQLite table or modifying the schema | `.github/skills/add-drizzle-schema/SKILL.md` |
+| Creating a reusable UI component | `.github/skills/create-ui-component/SKILL.md` |
+| Creating a new Next.js page or route segment | `.github/skills/create-page/SKILL.md` |
+| Creating a form with validation and API submission | `.github/skills/create-form/SKILL.md` |
+| Scaffolding a full CRUD resource end-to-end | `.github/skills/crud-resource/SKILL.md` |
+| Integrating Gemini API or any AI feature | `.github/skills/llm-integration/SKILL.md` |
+| Implementing the Analyze & Estimate pipeline | `.github/skills/ai-task-analysis/SKILL.md` |
+| Sprint generation or capacity planning | `.github/skills/sprint-planning/SKILL.md` |
+| Editing, reassigning, or deleting AI tasks | `.github/skills/manual-task-override/SKILL.md` |
+| Developer profiles, roles, or skills | `.github/skills/developer-roster/SKILL.md` |
+| User stories or story backlog | `.github/skills/user-story-management/SKILL.md` |
+| Sprint board visualization | `.github/skills/sprint-board/SKILL.md` |
 
 **Always read the full skill file via `read_file` before implementing. Never infer patterns from context alone.**
+
+---
+
+## Agents Policy
+
+This project ships purpose-built agents in `.github/agents/`. Switch to the right agent for each task:
+
+| Agent file | Switch to it when... |
+|---|---|
+| `navigator.agent.md` | Unsure which agent or skill to use — ask the navigator first |
+| `schema.agent.md` | Adding or modifying any table in `db/schema.ts` |
+| `api-builder.agent.md` | Scaffolding or editing any route handler in `app/api/` |
+| `ai-integration.agent.md` | Building the Gemini client, prompts, or analysis endpoint |
+| `sprint-planner.agent.md` | Implementing the sprint packing algorithm or board |
+| `frontend-builder.agent.md` | Creating pages, components, or forms |
+| `domain-entities.agent.md` | Building the Developer or User Story entity end-to-end |
+| `full-stack.agent.md` | Implementing a complete feature across all layers |
+
+**When in doubt, switch to the `navigator` agent first — it will route you to the correct agent.**
 
 ---
 
