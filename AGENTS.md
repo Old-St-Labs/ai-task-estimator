@@ -19,6 +19,7 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 - **New feature end-to-end?** → use prompt `.github/prompts/new-feature.prompt.md`
 - **Improving existing code structure?** → use `@refactor`
 - **Creating/improving agents, skills, or AI setup?** → use `@ai-setup`
+- **Writing or fixing e2e tests?** → use `@playwright`
 
 ## Structure
 
@@ -31,7 +32,8 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 │   ├── frontend.md                  ← UI, components, Tailwind
 │   ├── backend.md                   ← Server Actions, AI, types
 │   ├── refactor.md                  ← Structural improvements, no behaviour change
-│   └── ai-setup.md                  ← Create/improve agents, skills, and PROSE setup
+│   ├── ai-setup.md                  ← Create/improve agents, skills, and PROSE setup
+│   └── playwright.md                ← E2e tests, Page Object Model, CI
 ├── instructions/
 │   ├── typescript-strict.instructions.md       ← applyTo: **/*.{ts,tsx}
 │   ├── server-actions.instructions.md          ← applyTo: app/**/actions.ts
@@ -44,7 +46,8 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 │   ├── tailwind-v4/SKILL.md         ← @theme, CSS-first config
 │   ├── ai-integration/SKILL.md      ← Prompts, sanitization, API, mock engine
 │   ├── refactoring/SKILL.md         ← Extract, type-tighten, dedup, boundary fixes
-│   └── ai-setup/SKILL.md            ← Writing agents, skills, instructions, PROSE compliance
+│   ├── ai-setup/SKILL.md            ← Writing agents, skills, instructions, PROSE compliance
+│   └── playwright/SKILL.md          ← E2e config, POM, locators, test flows
 └── ai/
     ├── PROJECT_CONTEXT.md           ← Domain model & business rules
     └── file-map.md                  ← File navigation index

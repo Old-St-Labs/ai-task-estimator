@@ -28,6 +28,7 @@ Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS
 | Refactoring patterns | [refactoring skill](.github/skills/refactoring/SKILL.md) |
 | AI setup patterns | [ai-setup skill](.github/skills/ai-setup/SKILL.md) |
 | Token & cost optimization | [token-optimization skill](.github/skills/token-optimization/SKILL.md) |
+| Playwright e2e testing | [playwright skill](.github/skills/playwright/SKILL.md) |
 
 ## Agents
 
@@ -39,3 +40,4 @@ Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS
 | `@dev` | General full-stack tasks |
 | `@refactor` | Improve structure/types/boundaries without changing behaviour |
 | `@ai-setup` | Create/improve agents, skills, instructions, and PROSE compliance |
+| `@playwright` | Write and maintain Playwright e2e tests |

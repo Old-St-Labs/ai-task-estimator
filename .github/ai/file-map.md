@@ -49,6 +49,7 @@ Quick reference: feature area → file path. Update this when adding new files.
 | Refactoring | `.github/skills/refactoring/SKILL.md` | Component extraction, type tightening, deduplication |
 | AI Setup | `.github/skills/ai-setup/SKILL.md` | Writing agents, skills, instructions; PROSE compliance |
 | Token Optimization | `.github/skills/token-optimization/SKILL.md` | AI model selection, `max_tokens`, prompt trimming, cost |
+| Playwright | `.github/skills/playwright/SKILL.md` | E2e config, Page Object Model, locators, CI setup |
 
 ## Instructions (auto-load via `applyTo`)
 
@@ -69,6 +70,7 @@ Quick reference: feature area → file path. Update this when adding new files.
 | Backend | `.github/agents/backend.md` | Server Actions, types, AI integration |
 | Refactor | `.github/agents/refactor.md` | Structural improvements, zero behaviour change |
 | AI Setup | `.github/agents/ai-setup.md` | Create/improve agents, skills, instructions (.github/ only) |
+| Playwright | `.github/agents/playwright.md` | E2e tests in `e2e/` and `playwright.config.ts` |
 
 ## Planned Routes (not yet built)
 
