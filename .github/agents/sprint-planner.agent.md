@@ -47,7 +47,7 @@ database (1) → infrastructure (2) → backend (3) → frontend (4) → testing
 For each task (sorted by layer priority):
   key = task.developerId ?? "unassigned"
   capacity = developer.capacityHours (default 80h)
-  
+
   Find first sprint bucket where: currentHours + task.estimatedHours <= capacity
   If found: add to that sprint
   If not found: open a new sprint bucket

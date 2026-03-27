@@ -45,10 +45,10 @@ description: Guide for implementing the sprint planning engine — packing estim
 
 ---
 
-## API Route: `POST /api/projects/[id]/sprints/generate`
+## API Route: `POST /api/projects/[id]/sprints`
 
 ```ts
-// app/api/projects/[id]/sprints/generate/route.ts
+// app/api/projects/[id]/sprints/route.ts
 import { eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { tasks, sprints, developers, projects } from "@/db/schema";
@@ -211,7 +211,7 @@ export function GenerateSprintsButton({ projectId }: GenerateSprintsButtonProps)
     setError(null);
     setResult(null);
     try {
-      const res  = await fetch(`/api/projects/${projectId}/sprints/generate`, { method: "POST" });
+      const res  = await fetch(`/api/projects/${projectId}/sprints`, { method: "POST" });
       const json = await res.json();
 
       if (!res.ok) {
