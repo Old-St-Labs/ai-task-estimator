@@ -1,22 +1,9 @@
-export type TaskType = "FE" | "BE";
+import type { EstimationResult } from "@/src/domain/task";
 
-export type Task = {
-  title: string;
-  description: string;
-  type: TaskType;
-  estimatedHours: number;
-  assignedTo: string;
-  userStory: string;
-};
+// Re-export domain types so presentation components have a single import source
+export type { Task, TaskType, EstimationResult } from "@/src/domain/task";
 
-export type EstimationResult = {
-  tasks: Task[];
-  summary: {
-    totalHours: number;
-    byMember: Record<string, number>;
-  };
-};
-
+// Presentation-layer type — belongs here, not in domain
 export type ActionState =
   | { status: "idle" }
   | { status: "success"; result: EstimationResult }

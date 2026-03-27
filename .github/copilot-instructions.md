@@ -1,51 +1,40 @@
 # AI Task Estimator — Copilot Instructions
 
-## Project Overview
-An AI-powered task estimation tool. Next.js 16 App Router, React 19, TypeScript, Tailwind CSS v4.
+## Stack
+Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS v4 · Node.js
 
-> **CRITICAL:** This is Next.js 16 — it has breaking changes from v14/v15. Always read `node_modules/next/dist/docs/` before writing Next.js-specific code. Deprecation notices must be heeded.
+> **Next.js 16 has breaking changes.** Read `node_modules/next/dist/docs/` before writing routing, layouts, or data-fetching code.
 
-## Tech Stack
-| Layer | Technology |
+## Critical Rules
+- All `app/**/*.tsx` are Server Components by default. Add `"use client"` only for hooks/events/browser APIs.
+- **No `tailwind.config.js`** — all Tailwind config lives in `app/globals.css` under `@theme`.
+- Never use `any` — use `unknown` and narrow.
+- Server Actions must return `ActionState` and never throw — always catch errors.
+- Sanitize all user input before injecting into AI prompts.
+
+## Naming
+- Route folders: `kebab-case` | Components: `PascalCase` | Hooks: `camelCase` | Actions: `verbNounAction`
+
+## Context (load what you need, when you need it)
+
+| Need | Read |
+|------|------|
+| Domain model, business rules | [PROJECT_CONTEXT.md](.github/ai/PROJECT_CONTEXT.md) |
+| File locations | [file-map.md](.github/ai/file-map.md) |
+| Next.js 16 patterns | [nextjs16 skill](.github/skills/nextjs16/SKILL.md) |
+| React 19 APIs | [react19 skill](.github/skills/react19/SKILL.md) |
+| Tailwind v4 config | [tailwind-v4 skill](.github/skills/tailwind-v4/SKILL.md) |
+| AI API integration | [ai-integration skill](.github/skills/ai-integration/SKILL.md) |
+| Refactoring patterns | [refactoring skill](.github/skills/refactoring/SKILL.md) |
+| AI setup patterns | [ai-setup skill](.github/skills/ai-setup/SKILL.md) |
+
+## Agents
+
+| Agent | Invoke for |
 |-------|-----------|
-| Framework | Next.js 16.2.1 (App Router) |
-| UI | React 19 |
-| Language | TypeScript 5 (strict) |
-| Styling | Tailwind CSS v4 |
-| Runtime | Node.js |
-
-## Key Conventions
-
-### Next.js 16 App Router
-- All files under `app/` use the App Router; no `pages/` directory.
-- Components are **React Server Components by default** — add `"use client"` only when needed (event handlers, browser APIs, React hooks).
-- Use `"use server"` for Server Actions inside forms and mutations.
-- Layouts: `app/layout.tsx` (root), nested layouts via `app/<segment>/layout.tsx`.
-- Metadata: export `metadata` or `generateMetadata()` from `page.tsx` / `layout.tsx`.
-
-### React 19
-- Use the `use()` hook to unwrap Promises and Context in Server Components.
-- Prefer `useOptimistic` for optimistic UI updates.
-- Use `useFormStatus` for form pending state — must be in a child of a `<form>`.
-- Server Actions: defined with `"use server"`, passed to form `action` prop or called directly.
-
-### Tailwind CSS v4
-- **No `tailwind.config.js`** — configuration is CSS-first via `app/globals.css`.
-- Import Tailwind with `@import "tailwindcss"` in the CSS file.
-- Custom theme tokens defined with `@theme { --color-brand: ... }` inside CSS.
-- PostCSS plugin is `@tailwindcss/postcss` (already in `postcss.config.mjs`).
-
-### TypeScript
-- Strict mode on. Never use `any` — use `unknown` and narrow.
-- Prefer `type` over `interface` for object shapes; use `interface` for extensible contracts.
-- Co-locate types in the same file unless shared across 3+ files.
-
-### File & Folder Naming
-- Route segments: `kebab-case` folder names (e.g. `app/task-list/page.tsx`).
-- Components: `PascalCase` (e.g. `TaskCard.tsx`).
-- Utilities / hooks: `camelCase` (e.g. `useEstimate.ts`, `formatDuration.ts`).
-- Server Actions: prefix with verb, suffix with `Action` (e.g. `createEstimateAction.ts`).
-
-## Deeper Guides
-- Project context & domain rules → `.github/ai/PROJECT_CONTEXT.md`
-- Dev agent with implementation patterns → `.github/agents/dev.md`
+| `@orchestrator` | Planning multi-step features, architecture decisions |
+| `@frontend` | UI components, pages, Tailwind styling |
+| `@backend` | Server Actions, AI integration, types |
+| `@dev` | General full-stack tasks |
+| `@refactor` | Improve structure/types/boundaries without changing behaviour |
+| `@ai-setup` | Create/improve agents, skills, instructions, and PROSE compliance |

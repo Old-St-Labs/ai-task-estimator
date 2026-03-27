@@ -5,6 +5,8 @@ type Props = {
   result: EstimationResult;
 };
 
+const isProduction = !!process.env.AI_API_KEY;
+
 export function TaskBreakdownView({ result }: Props) {
   const { tasks, summary } = result;
 
@@ -47,6 +49,16 @@ export function TaskBreakdownView({ result }: Props) {
           </div>
         </div>
       </div>
+
+      {/* AI-native development note — production mode only */}
+      {isProduction && (
+        <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          <svg xmlns="http://www.w3.org/2000/svg" className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>
+            <strong className="font-semibold">AI-native development:</strong> Hours are adjusted for a team using AI coding assistants and AI-generated scaffolding, typically 30–50% faster than traditional estimates. Review and recalibrate based on your team&apos;s actual AI tooling maturity.
+          </span>
+        </div>
+      )}
 
       {/* Tasks grouped by user story */}
       {Object.entries(grouped).map(([story, storyTasks]) => (
