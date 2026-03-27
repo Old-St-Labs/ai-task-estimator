@@ -190,6 +190,7 @@ Before writing any code, check whether the task matches an available skill:
 | Adding, modifying, or scaffolding anything related to user stories   | `.github/skills/user-story-management/SKILL.md`        |
 | Implementing manual editing, reassignment, or deletion of AI tasks   | `.github/skills/manual-task-override/SKILL.md`         |
 | Building or modifying the sprint board visualization                 | `.github/skills/sprint-board/SKILL.md`                 |
+| Writing or scaffolding any Playwright E2E test                       | `.github/skills/e2e-testing/SKILL.md`                  |
 
 **Always read the full skill file via `read_file` before implementing. Never infer patterns from context alone.**
 
