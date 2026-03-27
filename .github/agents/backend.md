@@ -21,6 +21,7 @@ Write Server Actions, AI integration code, and shared types. Enforce security, v
 3. Load the relevant skill:
    - Next.js Server Actions → [nextjs16 skill](.github/skills/nextjs16/SKILL.md)
    - AI API patterns → [ai-integration skill](.github/skills/ai-integration/SKILL.md)
+   - Token & cost optimization → [token-optimization skill](.github/skills/token-optimization/SKILL.md)
 
 ## Server Action Contract
 

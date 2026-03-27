@@ -48,6 +48,16 @@ Quick reference: feature area → file path. Update this when adding new files.
 | AI Integration | `.github/skills/ai-integration/SKILL.md` | Prompt building, API calls, response validation |
 | Refactoring | `.github/skills/refactoring/SKILL.md` | Component extraction, type tightening, deduplication |
 | AI Setup | `.github/skills/ai-setup/SKILL.md` | Writing agents, skills, instructions; PROSE compliance |
+| Token Optimization | `.github/skills/token-optimization/SKILL.md` | AI model selection, `max_tokens`, prompt trimming, cost |
+
+## Instructions (auto-load via `applyTo`)
+
+| File | Applies to | Rules |
+|------|-----------|-------|
+| `typescript-strict.instructions.md` | `**/*.{ts,tsx}` | No `any`, type narrowing, naming |
+| `react-server-components.instructions.md` | `app/**/*.tsx` | SC/CC boundaries, data fetching patterns |
+| `server-actions.instructions.md` | `app/**/actions.ts` | Security, `ActionState` contract, sanitization |
+| `code-quality.instructions.md` | `**/*.{ts,tsx}` | 300-line limit, no inline styles, reuse components |
 
 ## Agents
 

@@ -144,5 +144,9 @@ Server Actions must always return `ActionState`. Never throw — catch errors an
 - Sanitize ALL user input before prompt injection.
 - Never log API keys or full request bodies.
 - Keep AI calls server-side only (Server Actions, Server Components).
-- Validate and cap parsed numbers: `Math.max(1, Math.min(40, Number(val)))`.
+- Validate and cap parsed numbers: `Math.max(min, Math.min(40, Number(val)))`.
 - Validate strings are in allowlists before using: `VALID_TYPES.has(String(t.type))`.
+
+## Cost & Token Guidance
+
+For prompt cost optimization, model selection, `max_tokens`, and token logging — see [token-optimization skill](.github/skills/token-optimization/SKILL.md).

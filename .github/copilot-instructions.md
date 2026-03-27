@@ -27,6 +27,7 @@ Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS
 | AI API integration | [ai-integration skill](.github/skills/ai-integration/SKILL.md) |
 | Refactoring patterns | [refactoring skill](.github/skills/refactoring/SKILL.md) |
 | AI setup patterns | [ai-setup skill](.github/skills/ai-setup/SKILL.md) |
+| Token & cost optimization | [token-optimization skill](.github/skills/token-optimization/SKILL.md) |
 
 ## Agents
 
