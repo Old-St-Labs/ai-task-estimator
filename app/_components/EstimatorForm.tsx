@@ -66,7 +66,7 @@ export function EstimatorForm() {
                     <line x1="21" y1="6" x2="3" y2="6" /><line x1="15" y1="12" x2="3" y2="12" /><line x1="17" y1="18" x2="3" y2="18" />
                   </svg>
                 </span>
-                <span className="text-sm font-semibold text-zinc-800">User Stories</span>
+                <label htmlFor="userStories" className="text-sm font-semibold text-zinc-800">User Stories</label>
               </div>
               <span className="text-xs text-zinc-400">one per line</span>
             </div>
@@ -104,7 +104,7 @@ export function EstimatorForm() {
         </div>
 
         {state.status === "error" && (
-          <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" data-testid="error-banner" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {state.message}
           </div>
         )}
