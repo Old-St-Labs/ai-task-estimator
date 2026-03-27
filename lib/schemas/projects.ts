@@ -6,9 +6,9 @@ export const projectSelectSchema = createSelectSchema(projects);
 export const projectInsertSchema = createInsertSchema(projects, {
   name: (s) => s.min(1, "Name is required").max(100),
   description: (s) => s.max(500).optional(),
-});
+}).omit({ id: true, createdAt: true, updatedAt: true });
 
-export const projectUpdateSchema = projectInsertSchema.partial().omit({ createdAt: true });
+export const projectUpdateSchema = projectInsertSchema.partial();
 
 export type ProjectSelect = z.infer<typeof projectSelectSchema>;
 export type ProjectInsert = z.infer<typeof projectInsertSchema>;

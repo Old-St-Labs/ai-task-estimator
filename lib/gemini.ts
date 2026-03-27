@@ -6,30 +6,31 @@
  * GoogleGenerativeAI directly elsewhere.
  *
  * Usage:
- *   import { gemini } from "@/lib/gemini";
- *   const result = await gemini.generateContent(prompt);
+ *   import { getJsonModel } from "@/lib/gemini";
+ *   const model  = getJsonModel();
+ *   const result = await model.generateContent(prompt);
  */
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = process.env.GEMINI_API_KEY;
-
-if (!apiKey) {
+if (!process.env.GEMINI_API_KEY) {
   throw new Error("GEMINI_API_KEY is not set. Add it to .env.local.");
 }
 
-const client = new GoogleGenerativeAI(apiKey);
+export const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
- * Pre-configured model instance.
- * gemini-2.0-flash is fast and inexpensive — swap to gemini-2.0-pro for
- * higher quality at higher cost.
+ * Returns a model instance configured for structured JSON output.
+ * Temperature 0.2 keeps output deterministic for structured data.
+ * Swap modelName to "gemini-1.5-pro" for higher quality at higher cost.
  */
-export const gemini = client.getGenerativeModel({
-  model: "gemini-2.0-flash",
-  generationConfig: {
-    // Force JSON output so route handlers can reliably JSON.parse() the response.
-    responseMimeType: "application/json",
-    temperature: 0.3,
-  },
-});
+export function getJsonModel(modelName = "gemini-3-flash-preview") {
+  return gemini.getGenerativeModel({
+    model: modelName,
+    generationConfig: {
+      responseMimeType: "application/json",
+      temperature: 0.2,
+      maxOutputTokens: 8192,
+    },
+  });
+}

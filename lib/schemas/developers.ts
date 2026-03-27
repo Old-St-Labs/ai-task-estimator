@@ -8,9 +8,9 @@ export const developerInsertSchema = createInsertSchema(developers, {
   capacityHours: (s) => s.min(1).max(80),
   // skillset is stored as a JSON string; validate as array before serialising
   skillset: z.array(z.string()).transform((arr) => JSON.stringify(arr)),
-});
+}).omit({ id: true, createdAt: true, updatedAt: true });
 
-export const developerUpdateSchema = developerInsertSchema.partial().omit({ createdAt: true });
+export const developerUpdateSchema = developerInsertSchema.partial();
 
 export type DeveloperSelect = z.infer<typeof developerSelectSchema>;
 export type DeveloperInsert = z.infer<typeof developerInsertSchema>;

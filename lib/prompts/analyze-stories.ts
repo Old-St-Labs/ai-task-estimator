@@ -1,99 +1,101 @@
 /**
  * lib/prompts/analyze-stories.ts
  *
- * Prompt builders for the AI analysis pipeline.
+ * Single combined prompt for the AI analysis pipeline.
  *
- * Each function returns a prompt string ready to be passed to gemini.generateContent().
- * All prompts instruct the model to return valid JSON matching the documented shape.
+ * The prompt requests gap analysis + task breakdown + assignment + estimation
+ * in one Gemini call, returning a structured JSON object that matches
+ * llmResponseSchema in the analyze route handler.
+ *
+ * Rules:
+ * - Always include numeric Story IDs and Developer IDs so the LLM response
+ *   can be directly inserted into the DB without a lookup step.
+ * - Always end with the "Return ONLY valid JSON" instruction.
+ * - Never build two separate prompts — one call, one response.
  */
 
 import type { Developer, UserStory } from "@/db/schema";
 
-// ---------------------------------------------------------------------------
-// Gap Analysis
-// ---------------------------------------------------------------------------
-
 /**
- * Asks the LLM to identify implicit requirements that the user stories don't
- * explicitly mention (e.g. password hashing, email verification, error handling).
+ * Builds the single combined analysis prompt.
  *
- * Returns: { gaps: string[] }
+ * Returns a prompt string ready to be passed to getJsonModel().generateContent().
  */
-export function buildGapAnalysisPrompt(stories: UserStory[]): string {
-  return `You are a senior software architect reviewing a list of user stories before development begins.
-
-Identify implicit requirements, hidden tasks, or missing concerns that are NOT mentioned in the stories
-but are typically required for a production-ready implementation (e.g. error handling, database migrations,
-email triggers, security concerns, loading states, empty states, pagination, etc.).
-
-User Stories:
-${stories.map((s, i) => `${i + 1}. ${s.title}: ${s.description}`).join("\n")}
-
-Respond with valid JSON in this exact shape:
-{
-  "gaps": [
-    "string describing an implicit requirement or missing concern"
-  ]
-}`;
-}
-
-// ---------------------------------------------------------------------------
-// Task Breakdown + Assignment + Estimation
-// ---------------------------------------------------------------------------
-
-/**
- * Asks the LLM to decompose each user story into granular sub-tasks,
- * assign each task to the best-fit developer, and estimate hours.
- *
- * Returns: { tasks: AiTask[] }
- */
-export interface AiTask {
-  userStoryTitle: string;
-  title: string;
-  description: string;
-  layer: "backend" | "frontend" | "infrastructure" | "design" | "qa" | "other";
-  estimatedHours: number;
-  assignedDeveloperName: string;
-  reasoning: string;
-}
-
-export function buildTaskBreakdownPrompt(
-  stories: UserStory[],
-  developers: Developer[]
+export function buildAnalysisPrompt(
+  projectName: string,
+  stories: Pick<UserStory, "id" | "title" | "description" | "acceptanceCriteria" | "priority">[],
+  devRoster: Pick<Developer, "id" | "name" | "role" | "skillset" | "capacityHours">[]
 ): string {
-  const devList = developers
+  const storiesText = stories
+    .map(
+      (s) =>
+        `Story ID: ${s.id}
+Title: ${s.title}
+Priority: ${s.priority}
+Description: ${s.description}
+Acceptance Criteria: ${s.acceptanceCriteria ?? "not specified"}`
+    )
+    .join("\n\n---\n\n");
+
+  const devsText = devRoster
     .map(
       (d) =>
-        `- ${d.name} (${d.role}): skills = ${d.skillset}, capacity = ${d.capacityHours}h per sprint`
+        `Developer ID: ${d.id}
+Name: ${d.name}
+Role: ${d.role}
+Skills: ${d.skillset}
+Capacity: ${d.capacityHours}h per sprint`
     )
-    .join("\n");
+    .join("\n\n");
 
-  return `You are a senior tech lead breaking down user stories into granular development tasks.
+  return `You are an expert software engineering project planner for the project "${projectName}".
 
-Developers available:
-${devList}
+Your job is to:
+1. Identify implicit requirements and missing tasks not stated in the stories (gap analysis)
+2. Break each user story into granular, actionable sub-tasks
+3. Assign each sub-task to the most appropriate developer based on their skills
+4. Estimate realistic effort in hours per task
 
-User Stories:
-${stories.map((s, i) => `${i + 1}. [${s.priority.toUpperCase()}] ${s.title}\n   Description: ${s.description}${s.acceptanceCriteria ? `\n   Acceptance Criteria: ${s.acceptanceCriteria}` : ""}`).join("\n\n")}
+## User Stories
+${storiesText}
 
-Instructions:
-- Break each story into small, independently deliverable sub-tasks (typically 2–8 hours each).
-- Assign each task to the developer whose skills best match the work.
-- Estimate hours realistically — account for testing, code review, and edge cases.
-- Set the layer field to help with sprint ordering (infrastructure and backend before frontend).
-- Include a short reasoning for the assignment.
+## Development Team
+${devsText}
 
-Respond with valid JSON in this exact shape:
+## Task Rules
+- Break each story into 3–8 sub-tasks covering all necessary layers
+- Include implicit tasks not mentioned in the story (e.g. input validation, error handling, DB indexes, email triggers, loading/empty states)
+- Each task must take between 0.5 and 16 hours
+- Assign tasks based on skill match — use the Developer IDs provided above
+- If no developer has the right skill, set assignedDeveloperId to null
+- layer must be one of: backend, frontend, database, infrastructure, testing, other
+
+## Gap Rules
+- List business requirements, edge cases, or technical concerns implied but not stated
+- Reference the Story ID the gap belongs to
+- Examples: "Password reset flow not specified", "Rate limiting on auth endpoints"
+
+## Required JSON Output
+
+Return ONLY valid JSON — no markdown, no code blocks, no explanation:
+
 {
+  "gaps": [
+    {
+      "storyId": <number — must be a valid Story ID from above>,
+      "title": "<short gap title>",
+      "description": "<explanation of the missing requirement>"
+    }
+  ],
   "tasks": [
     {
-      "userStoryTitle": "exact title of the user story this task belongs to",
-      "title": "short task title",
-      "description": "what needs to be done",
-      "layer": "backend" | "frontend" | "infrastructure" | "design" | "qa" | "other",
-      "estimatedHours": number,
-      "assignedDeveloperName": "exact name of assigned developer",
-      "reasoning": "why this developer was chosen"
+      "userStoryId": <number — must be a valid Story ID from above>,
+      "title": "<specific actionable task title>",
+      "description": "<what needs to be implemented and why>",
+      "layer": "<backend|frontend|database|infrastructure|testing|other>",
+      "estimatedHours": <number between 0.5 and 16>,
+      "assignedDeveloperId": <Developer ID from the list above, or null>,
+      "assignmentReason": "<why this developer was chosen>"
     }
   ]
 }`;
