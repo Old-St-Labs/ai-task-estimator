@@ -7,10 +7,18 @@ type Props = {
 
 const isProduction = !!process.env.AI_API_KEY;
 
+const MEMBER_BAR_COLORS = [
+  "bg-teal-500",
+  "bg-violet-500",
+  "bg-amber-500",
+  "bg-blue-500",
+  "bg-rose-500",
+  "bg-emerald-500",
+];
+
 export function TaskBreakdownView({ result }: Props) {
   const { tasks, summary } = result;
 
-  // Group tasks by user story
   const grouped = tasks.reduce<Record<string, typeof tasks>>((acc, task) => {
     const key = task.userStory || "Other";
     (acc[key] ??= []).push(task);
@@ -18,61 +26,80 @@ export function TaskBreakdownView({ result }: Props) {
   }, {});
 
   const memberEntries = Object.entries(summary.byMember).sort(
-    (a, b) => b[1] - a[1]
+    ([, a], [, b]) => b - a
   );
 
   return (
-    <div className="mt-10 space-y-8">
-      {/* Summary bar */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-3">
-          Summary
-        </h2>
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-zinc-900">
-              {summary.totalHours}h
-            </span>
-            <span className="text-sm text-zinc-500">total</span>
+    <div className="space-y-5">
+
+      {/* Summary row */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {/* Total hours */}
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-400">Total Estimate</p>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-4xl font-bold text-zinc-900">{summary.totalHours}</span>
+            <span className="text-base font-medium text-zinc-500">hours</span>
           </div>
-          <div className="h-6 w-px bg-zinc-200 hidden sm:block" />
-          <div className="flex flex-wrap gap-3">
-            {memberEntries.map(([member, hours]) => (
-              <div
-                key={member}
-                className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1 text-sm"
-              >
-                <span className="font-medium text-zinc-800">{member}</span>
-                <span className="text-zinc-500">{hours}h</span>
-              </div>
+          <p className="mt-1 text-xs text-zinc-400">
+            {tasks.length} tasks · {memberEntries.length} member{memberEntries.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+
+        {/* Workload by member — My Goals style */}
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-zinc-400">Workload</p>
+          <ul className="space-y-3">
+            {memberEntries.map(([member, hours], i) => (
+              <li key={member}>
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-zinc-700">{member}</span>
+                  <span className="text-sm text-zinc-500">{hours}h</span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                  {/* width is data-driven — intentional inline style */}
+                  <div
+                    className={`h-full rounded-full ${MEMBER_BAR_COLORS[i % MEMBER_BAR_COLORS.length]}`}
+                    style={{ width: `${Math.round((hours / summary.totalHours) * 100)}%` }}
+                  />
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
 
-      {/* AI-native development note — production mode only */}
+      {/* AI-native development note — production only */}
       {isProduction && (
-        <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
-          <svg xmlns="http://www.w3.org/2000/svg" className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div className="flex items-start gap-3 rounded-xl border border-violet-100 bg-violet-50 px-4 py-3 text-sm text-violet-700">
+          <svg xmlns="http://www.w3.org/2000/svg" className="mt-0.5 h-4 w-4 shrink-0 text-violet-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
           <span>
-            <strong className="font-semibold">AI-native development:</strong> Hours are adjusted for a team using AI coding assistants and AI-generated scaffolding, typically 30–50% faster than traditional estimates. Review and recalibrate based on your team&apos;s actual AI tooling maturity.
+            <strong className="font-semibold">AI-native development:</strong> Hours reflect ~30–50%
+            acceleration from AI tooling. Recalibrate based on your team&apos;s actual AI maturity.
           </span>
         </div>
       )}
 
       {/* Tasks grouped by user story */}
       {Object.entries(grouped).map(([story, storyTasks]) => (
-        <section key={story}>
-          <h2 className="mb-3 text-sm font-semibold text-zinc-500 flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-indigo-400" />
-            <span className="line-clamp-2">{story}</span>
-          </h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div key={story} className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3.5">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="h-2 w-2 shrink-0 rounded-full bg-teal-400" aria-hidden="true" />
+              <h2 className="truncate text-sm font-semibold text-zinc-700">{story}</h2>
+            </div>
+            <span className="ml-3 shrink-0 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500">
+              {storyTasks.length} task{storyTasks.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+          <div className="divide-y divide-zinc-50">
             {storyTasks.map((task, i) => (
               <TaskCard key={`${story}-${i}`} task={task} />
             ))}
           </div>
-        </section>
+        </div>
       ))}
     </div>
   );

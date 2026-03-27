@@ -1,17 +1,43 @@
 @import "tailwindcss";
 
 @theme {
-  --color-indigo-50: oklch(97% 0.02 265);
-  --color-indigo-100: oklch(93% 0.05 265);
-  --color-indigo-200: oklch(87% 0.09 265);
-  --color-indigo-400: oklch(68% 0.18 265);
-  --color-indigo-500: oklch(60% 0.22 265);
-  --color-indigo-600: oklch(53% 0.24 265);
-  --color-indigo-700: oklch(46% 0.22 265);
-  --color-indigo-800: oklch(39% 0.19 265);
+  /* Violet — primary brand */
+  --color-violet-50:  oklch(97%   0.02  290);
+  --color-violet-100: oklch(94%   0.04  290);
+  --color-violet-200: oklch(88%   0.08  290);
+  --color-violet-300: oklch(80%   0.12  290);
+  --color-violet-400: oklch(70%   0.17  290);
+  --color-violet-500: oklch(61%   0.22  290);
+  --color-violet-600: oklch(54%   0.24  290);
+  --color-violet-700: oklch(46%   0.22  290);
+
+  /* Teal — accent */
+  --color-teal-100: oklch(94%   0.06  185);
+  --color-teal-400: oklch(73%   0.14  185);
+  --color-teal-500: oklch(65%   0.15  185);
+  --color-teal-600: oklch(56%   0.14  185);
+
+  /* Indigo — keep for backward compat */
+  --color-indigo-50:  oklch(97%  0.02  265);
+  --color-indigo-100: oklch(93%  0.05  265);
+  --color-indigo-200: oklch(87%  0.09  265);
+  --color-indigo-400: oklch(68%  0.18  265);
+  --color-indigo-500: oklch(60%  0.22  265);
+  --color-indigo-600: oklch(53%  0.24  265);
+  --color-indigo-700: oklch(46%  0.22  265);
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+/* Dot-grid background pattern */
+.dot-grid {
+  background-image: radial-gradient(
+    circle,
+    oklch(65% 0.09 290 / 0.18) 1.5px,
+    transparent 1.5px
+  );
+  background-size: 24px 24px;
 }
 
