@@ -1,64 +1,216 @@
 # Copilot Instructions — AI Task Estimator
 
 > **Project:** `ai-task-estimator` — a standalone Next.js 16 App Router application.
-> This section overrides all monorepo conventions below for this project specifically.
+> Running locally only. No Docker, no cloud services, no monorepo — just Next.js + SQLite + Gemini.
 
 ---
 
-## Project Tech Stack
+## Tech Stack
 
-| Concern        | Choice                                            |
-|----------------|---------------------------------------------------|
-| Framework      | Next.js 16 — App Router (Route Handlers)          |
-| Language       | TypeScript 5 (strict mode)                        |
-| Styling        | Tailwind CSS v4                                   |
-| ORM            | Drizzle ORM (`drizzle-orm`)                       |
-| Database       | SQLite via `better-sqlite3` (`local.db`)          |
-| Validation     | Zod 4 — derived from Drizzle via `drizzle-zod`   |
-| Response shape | `{ "code": "200", "data": <payload> }`            |
-| Auth           | Not implemented                                   |
-| Package mgr    | Yarn 1.22                                         |
+| Concern         | Choice                                                        |
+|-----------------|---------------------------------------------------------------|
+| Framework       | Next.js 16 — App Router (Route Handlers)                      |
+| Language        | TypeScript 5 (strict mode)                                    |
+| Styling         | Tailwind CSS v4                                               |
+| ORM             | Drizzle ORM (`drizzle-orm`)                                   |
+| Database        | SQLite via `better-sqlite3` (`local.db`)                      |
+| Validation      | Zod 4 — derived from Drizzle via `drizzle-zod`               |
+| AI              | Google Gemini via `@google/generative-ai`                     |
+| Response shape  | `{ "code": "200", "data": <payload> }`                        |
+| Auth            | Not implemented (V1)                                          |
+| Package mgr     | Yarn 1.22                                                     |
+
+---
 
 ## Project Structure
 
 ```
 app/
   api/
-    <resource>/
-      route.ts        ← collection endpoints (GET, POST)
-    <resource>/
+    projects/
+      route.ts              ← GET (list), POST (create)
       [id]/
-        route.ts      ← single-item endpoints (GET, PUT, PATCH, DELETE)
+        route.ts            ← GET, PATCH, DELETE
+        analyze/
+          route.ts          ← POST — triggers Gemini gap analysis + task breakdown
+        sprints/
+          route.ts          ← POST — generates sprint plan from tasks
+    developers/
+      route.ts
+      [id]/
+        route.ts
+    user-stories/
+      route.ts
+      [id]/
+        route.ts
+    tasks/
+      route.ts
+      [id]/
+        route.ts
+    sprints/
+      route.ts
+      [id]/
+        route.ts
 db/
   schema.ts           ← all Drizzle table definitions (single source of truth)
   index.ts            ← db singleton — import { db } from "@/db"
 lib/
   api-response.ts     ← response helpers (ok, created, notFound, badRequest, internalError)
+  gemini.ts           ← Gemini client singleton
+  prompts/
+    analyze-stories.ts  ← prompt builders: buildGapAnalysisPrompt, buildTaskBreakdownPrompt
   schemas/            ← Zod schemas derived from Drizzle tables (one file per resource)
+    projects.ts
+    developers.ts
+    user-stories.ts
+    tasks.ts
+    sprints.ts
 .github/
   skills/
-    create-api-endpoint.md  ← Copilot skill for scaffolding API endpoints
-drizzle.config.ts     ← drizzle-kit configuration
+    create-api-endpoint.md  ← skill for scaffolding API route handlers
+drizzle.config.ts     ← drizzle-kit config (sqlite, local.db)
+.env.local            ← GEMINI_API_KEY (gitignored)
+.env.local.example    ← committed template
 ```
+
+---
+
+## Domain Model
+
+### Tables (defined in `db/schema.ts`)
+
+| Table          | Key columns                                                                                  |
+|----------------|----------------------------------------------------------------------------------------------|
+| `projects`     | id, name, description, created_at, updated_at                                               |
+| `developers`   | id, project_id, name, role, skillset (JSON string), capacity_hours, created_at, updated_at  |
+| `user_stories` | id, project_id, title, description, acceptance_criteria, priority, created_at, updated_at   |
+| `sprints`      | id, project_id, sprint_number, start_date, end_date, created_at, updated_at                 |
+| `tasks`        | id, user_story_id, sprint_id, developer_id, title, description, estimated_hours, status, layer, created_at, updated_at |
+
+### Relationships
+
+- A **Project** has many **Developers**, **UserStories**, and **Sprints**.
+- A **UserStory** belongs to a **Project** and has many **Tasks**.
+- A **Task** belongs to a **UserStory** and optionally to a **Developer** and a **Sprint**.
+- A **Sprint** belongs to a **Project** and has many **Tasks**.
+
+---
+
+## AI Pipeline
+
+### Step 1 — Gap Analysis (`buildGapAnalysisPrompt`)
+Sends user stories to Gemini to surface implicit requirements not mentioned in the stories.
+Returns `{ gaps: string[] }`.
+
+### Step 2 — Task Breakdown + Assignment + Estimation (`buildTaskBreakdownPrompt`)
+Sends user stories + developer list to Gemini. The model decomposes each story into granular
+sub-tasks, assigns each to the best-fit developer by skill, and estimates hours.
+Returns `{ tasks: AiTask[] }`.
+
+### Step 3 — Sprint Packing (server-side algorithm, no AI)
+Groups tasks into 2-week sprints respecting:
+- Developer capacity (`capacity_hours`, default 70h per sprint).
+- Layer ordering: `infrastructure` → `backend` → `frontend`/`design`/`qa`.
+
+### Prompt rules
+- All prompts live in `lib/prompts/analyze-stories.ts`.
+- Always instruct the model to return `application/json` (already set in `lib/gemini.ts`).
+- Keep prompts deterministic — use `temperature: 0.3`.
+- Never call `new GoogleGenerativeAI()` outside of `lib/gemini.ts`.
+
+---
+
+## API Conventions
+
+### Response shape (all endpoints)
+```json
+{ "code": "200", "data": <payload> }
+{ "code": "404", "data": { "message": "Not found" } }
+```
+Use helpers from `lib/api-response.ts`: `ok`, `created`, `notFound`, `badRequest`, `internalError`.
+
+### REST rules
+- Plural nouns for collections: `/projects`, `/developers`, `/user-stories`, `/tasks`, `/sprints`.
+- Path params for identity: `/projects/[id]`.
+- Query params for filtering: `?projectId=1&status=pending`.
+- `POST` for creation and action triggers (e.g. `POST /projects/[id]/analyze`).
+- `PATCH` for partial updates — never `PUT` unless doing full replacement.
+
+### Validation
+- Parse and validate all request bodies using the Zod insert/update schemas from `lib/schemas/`.
+- Return `badRequest()` with Zod error details on validation failure.
+- Never trust client-supplied `id` values in the request body — use the URL param only.
+
+### HTTP status codes
+| Scenario            | Code |
+|---------------------|------|
+| Created             | 201  |
+| Success with body   | 200  |
+| Validation error    | 400  |
+| Not found           | 404  |
+| Server / AI error   | 500  |
+
+---
+
+## Zod Schema Conventions
+
+- One file per resource in `lib/schemas/`.
+- Each file exports: `*SelectSchema`, `*InsertSchema`, `*UpdateSchema` (insert partial, omit timestamps).
+- `skillset` on developers is stored as a JSON string in SQLite but validated as `string[]` via Zod `.transform()`.
+- Derive from Drizzle tables via `createSelectSchema` / `createInsertSchema` from `drizzle-zod`.
+
+---
+
+## Environment Variables
+
+| Variable        | Purpose                        |
+|-----------------|--------------------------------|
+| `GEMINI_API_KEY` | Google Gemini API key. Get one at https://aistudio.google.com/app/apikey |
+
+Add to `.env.local` (already gitignored). Never commit this file.
+
+---
 
 ## Skills Policy (Must Follow)
 
-Before writing any code for this project, check whether the task matches an available skill:
+Before writing any code, check whether the task matches an available skill:
 
-| Task | Skill to read |
-|------|---------------|
+| Task                                       | Skill to read                           |
+|--------------------------------------------|-----------------------------------------|
 | Adding or scaffolding any API route handler | `.github/skills/create-api-endpoint.md` |
 
 **Always read the full skill file via `read_file` before implementing. Never infer patterns from context alone.**
 
+---
+
 ## Useful Commands
 
 ```bash
-yarn dev          # Start dev server
-yarn db:push      # Sync Drizzle schema → local.db (run after any schema change)
+yarn dev          # Start dev server (http://localhost:3000)
+yarn db:push      # Sync Drizzle schema → local.db  ← run after any schema change
 yarn db:studio    # Open Drizzle Studio to browse local.db
 yarn build        # Production build
 ```
+
+---
+
+## Golden Rules
+
+1. **Never call Gemini outside of a Route Handler** — AI calls belong in `app/api/*/route.ts`, not in components or utility functions that run on the client.
+2. **Never import `db` or `gemini` on the client side** — both are server-only. If Next.js warns about bundling `better-sqlite3`, add `serverExternalPackages: ['better-sqlite3']` to `next.config.ts`.
+3. **`db/schema.ts` is the single source of truth** — derive Zod schemas from it, never duplicate column definitions.
+4. **All response bodies must go through `lib/api-response.ts`** — never call `NextResponse.json()` directly.
+5. **Skillset is always a JSON string in the DB** — serialize on write (`JSON.stringify`), parse on read (`JSON.parse`). The Zod schema handles this via `.transform()`.
+6. **Sprint packing is a pure server-side algorithm** — no AI call needed. Sort tasks by layer, bin-pack into sprints by developer capacity.
+7. **No auth in V1** — do not add authentication middleware or session handling.
+
+---
+
+# ⚠️ IGNORE BELOW — Monorepo Template Remnants (Not Applicable)
+
+> Everything below this line is from the NX monorepo template this project was initialized from.
+> It describes NestJS microservices, DynamoDB, Terraform, and AWS infrastructure that **do not exist**
+> in this project. Copilot should **ignore all of it** when working in this repository.
 
 ---
 
