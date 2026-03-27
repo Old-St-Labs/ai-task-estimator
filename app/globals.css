@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  --color-indigo-50: oklch(97% 0.02 265);
+  --color-indigo-100: oklch(93% 0.05 265);
+  --color-indigo-200: oklch(87% 0.09 265);
+  --color-indigo-400: oklch(68% 0.18 265);
+  --color-indigo-500: oklch(60% 0.22 265);
+  --color-indigo-600: oklch(53% 0.24 265);
+  --color-indigo-700: oklch(46% 0.22 265);
+  --color-indigo-800: oklch(39% 0.19 265);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
