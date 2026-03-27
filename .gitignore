@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local sqlite database
+local.db
+local.db-shm
+local.db-wal
+
+# drizzle migrations (local dev only)
+/db/migrations
