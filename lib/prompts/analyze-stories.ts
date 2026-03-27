@@ -43,8 +43,7 @@ Acceptance Criteria: ${s.acceptanceCriteria ?? "not specified"}`
         `Developer ID: ${d.id}
 Name: ${d.name}
 Role: ${d.role}
-Skills: ${d.skillset}
-Capacity: ${d.capacityHours}h per sprint`
+Skills: ${d.skillset}`
     )
     .join("\n\n");
 
@@ -69,6 +68,7 @@ ${devsText}
 - Assign tasks based on skill match — use the Developer IDs provided above
 - If no developer has the right skill, set assignedDeveloperId to null
 - layer must be one of: backend, frontend, database, infrastructure, testing, other
+- Do NOT limit the number of tasks or total hours per developer based on capacity — estimate effort purely on what the work requires. Sprint planning will schedule tasks across multiple sprints to fit capacity.
 
 ## Gap Rules
 - List business requirements, edge cases, or technical concerns implied but not stated
