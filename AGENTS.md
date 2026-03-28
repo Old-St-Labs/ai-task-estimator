@@ -19,7 +19,7 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 - **New feature end-to-end?** → use prompt `.github/prompts/new-feature.prompt.md`
 - **Improving existing code structure?** → use `@refactor`
 - **Creating/improving agents, skills, or AI setup?** → use `@ai-setup`
-- **Writing or fixing e2e tests?** → use `@playwright`
+- **Writing or fixing e2e tests?** → use `@e2e`
 
 ## Structure
 
@@ -33,7 +33,8 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 │   ├── backend.md                   ← Server Actions, AI, types
 │   ├── refactor.md                  ← Structural improvements, no behaviour change
 │   ├── ai-setup.md                  ← Create/improve agents, skills, and PROSE setup
-│   └── playwright.md                ← E2e tests, Page Object Model, CI
+│   ├── e2e.md                       ← E2e tests, Page Object Model, CI
+│   └── playwright.md                ← DEPRECATED — use e2e.md
 ├── instructions/
 │   ├── typescript-strict.instructions.md       ← applyTo: **/*.{ts,tsx}
 │   ├── server-actions.instructions.md          ← applyTo: app/**/actions.ts

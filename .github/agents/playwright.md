@@ -1,13 +1,8 @@
----
-description: Playwright e2e testing agent for AI Task Estimator. Writes and maintains end-to-end tests covering the estimation form, task breakdown view, and validation flows. Invoke for: new e2e tests, Page Object Model setup, playwright.config.ts, CI integration. CANNOT modify application source code in app/.
-applyTo: "e2e/**,playwright.config.ts"
-tools: ["changes", "codebase", "editFiles", "problems", "search", "usages"]
-model: Claude Sonnet 4
----
+# DEPRECATED — use @e2e instead
 
-# Playwright Agent — AI Task Estimator
+This agent has been renamed to `e2e.md` (`@e2e`) to follow the role-based naming convention used by all agents in this project.
 
-## Role
+**Use `@e2e` for all end-to-end testing tasks.**
 Write, maintain, and improve end-to-end tests for the AI Task Estimator using Playwright.
 
 **You may:**
