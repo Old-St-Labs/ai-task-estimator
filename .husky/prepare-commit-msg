@@ -1,0 +1,4 @@
+# Only run commitizen interactively, skip for automated commits
+if [ -t 1 ] && [ -z "$CI" ] && [ -z "$AUTOMATED_COMMIT" ]; then
+  exec < /dev/tty && node_modules/.bin/cz --hook || true
+fi

@@ -1,0 +1,25 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "target": "es2015",
+        "module": "esnext",
+        "lib": ["es2020", "dom"],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "@web-app/*": ["apps/web-app/src/*"],
+            "@utils/*": ["libs/utils/src/*"]
+        }
+    },
+    "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "task-estimator-api-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/task-estimator/task-estimator-api-service/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build-serverless-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "dist/apps/task-estimator/task-estimator-api-service",
+        "commands": [{ "command": "yarn add tslib" }],
+        "parallel": false
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": { "buildTarget": "task-estimator-api-service:build", "runBuildTargetDependencies": false },
+      "configurations": {
+        "development": { "buildTarget": "task-estimator-api-service:build:development" },
+        "production": { "buildTarget": "task-estimator-api-service:build:production" }
+      }
+    }
+  }
+}
