@@ -20,6 +20,7 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 - **Improving existing code structure?** → use `@refactor`
 - **Creating/improving agents, skills, or AI setup?** → use `@ai-setup`
 - **Writing or fixing e2e tests?** → use `@e2e`
+- **Reviewing code quality, security, or patterns?** → use `@code-review`
 
 ## Structure
 
@@ -34,7 +35,8 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 │   ├── refactor.md                  ← Structural improvements, no behaviour change
 │   ├── ai-setup.md                  ← Create/improve agents, skills, and PROSE setup
 │   ├── e2e.md                       ← E2e tests, Page Object Model, CI
-│   └── playwright.md                ← DEPRECATED — use e2e.md
+│   ├── playwright.md                ← DEPRECATED — use e2e.md
+│   └── code-review.md               ← Read-only code audit; severity-ranked findings
 ├── instructions/
 │   ├── typescript-strict.instructions.md       ← applyTo: **/*.{ts,tsx}
 │   ├── server-actions.instructions.md          ← applyTo: app/**/actions.ts

@@ -41,3 +41,4 @@ Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS
 | `@refactor` | Improve structure/types/boundaries without changing behaviour |
 | `@ai-setup` | Create/improve agents, skills, instructions, and PROSE compliance |
 | `@e2e` | Write and maintain Playwright e2e tests |
+| `@code-review` | Audit code against project rules; report findings with severity and fix (read-only) |

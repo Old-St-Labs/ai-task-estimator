@@ -71,6 +71,7 @@ Quick reference: feature area → file path. Update this when adding new files.
 | Refactor | `.github/agents/refactor.md` | Structural improvements, zero behaviour change |
 | AI Setup | `.github/agents/ai-setup.md` | Create/improve agents, skills, instructions (.github/ only) |
 | E2E | `.github/agents/e2e.md` | E2e tests in `e2e/` and `playwright.config.ts` |
+| Code Review | `.github/agents/code-review.md` | Read-only audit against project rules; structured findings report |
 
 ## Planned Routes (not yet built)
 
