@@ -34,7 +34,7 @@ Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS
 
 | Agent | Invoke for |
 |-------|-----------|
-| `@orchestrator` | Planning multi-step features, architecture decisions |
+| `@orchestrator` | **Master agent — start here for everything.** Routes, plans, and implements |
 | `@frontend` | UI components, pages, Tailwind styling |
 | `@backend` | Server Actions, AI integration, types |
 | `@dev` | General full-stack tasks |

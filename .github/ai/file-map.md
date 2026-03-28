@@ -64,7 +64,7 @@ Quick reference: feature area → file path. Update this when adding new files.
 
 | Agent | Path | Scope |
 |-------|------|-------|
-| Orchestrator | `.github/agents/orchestrator.md` | Planning & routing (read-only) |
+| Orchestrator | `.github/agents/orchestrator.md` | **Master agent** — single entry point; routes, plans, and implements |
 | Dev | `.github/agents/dev.md` | Full-stack general tasks |
 | Frontend | `.github/agents/frontend.md` | UI components, pages, CSS |
 | Backend | `.github/agents/backend.md` | Server Actions, types, AI integration |

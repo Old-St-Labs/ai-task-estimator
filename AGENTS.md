@@ -12,6 +12,8 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 
 ## Quick Start
 
+> **Talk to `@orchestrator` for everything.** It will answer questions, implement simple tasks directly, and route complex work to the right specialist.
+
 - **Planning a feature?** → use `@orchestrator`
 - **Building UI?** → use `@frontend`
 - **Writing Server Actions / AI integration?** → use `@backend`
