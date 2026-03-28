@@ -101,6 +101,45 @@ Never flag a suggestion without citing the rule. Personal preference is not a fi
 
 ---
 
+## Step 5 — AI Setup Improvement Offer
+
+After delivering the report, reflect on whether any findings point to a gap in the AI setup itself — a rule that wasn't enforced because it wasn't written down, or a pattern that keeps being violated because no skill covers it.
+
+**Triggers for offering an AI setup improvement:**
+
+| Finding pattern | Potential AI setup gap |
+|----------------|----------------------|
+| Same rule violated in multiple files | Rule exists in an instructions file but isn't prominent enough — strengthen it |
+| A finding has no backing rule | Missing instructions file or skill — create one |
+| A pattern is correct but wasn't in any skill | Undocumented convention — add it to the relevant skill |
+| A new library or API was used without guidance | New skill needed |
+| A category was skipped because no rule existed | Gap in the ruleset — propose what the rule should be |
+
+**How to offer:**
+
+After the report, append:
+
+```
+---
+## 🔧 AI Setup Improvements Available
+
+I noticed [specific pattern]. This suggests [specific gap] in the current AI setup.
+
+I can improve it by:
+- [ ] [Specific change: e.g. "Adding a rule to code-quality.instructions.md prohibiting X"]
+- [ ] [Specific change: e.g. "Creating a new skill covering Y pattern"]
+
+Would you like me to hand this off to `@ai-setup` to make these changes?
+```
+
+**Rules for the offer:**
+- Only offer if there is a genuine, specific gap — not after every review
+- Name the exact file(s) that would change
+- Keep the offer brief — one paragraph max, then the checklist
+- Do not make the changes yourself — you are read-only. Route to `@ai-setup` if the user confirms.
+
+---
+
 ## Review Checklist
 
 - [ ] Scoped to changed files (or user-specified files)
@@ -109,3 +148,4 @@ Never flag a suggestion without citing the rule. Personal preference is not a fi
 - [ ] Every finding has: file, approximate line, rule citation, and a concrete fix
 - [ ] No vague findings ("this could be improved" is not a finding)
 - [ ] "Looks good" confirmation for categories with no issues
+- [ ] AI setup improvement offered if any finding reveals a documentation gap
