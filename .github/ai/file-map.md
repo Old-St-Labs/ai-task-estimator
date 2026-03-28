@@ -50,6 +50,7 @@ Quick reference: feature area → file path. Update this when adding new files.
 | AI Setup | `.github/skills/ai-setup/SKILL.md` | Writing agents, skills, instructions; PROSE compliance |
 | Token Optimization | `.github/skills/token-optimization/SKILL.md` | AI model selection, `max_tokens`, prompt trimming, cost |
 | Playwright | `.github/skills/playwright/SKILL.md` | E2e config, Page Object Model, locators, CI setup |
+| Requirements | `.github/skills/requirements/SKILL.md` | Feature elicitation, spec template, Definition of Ready checklist |
 
 ## Instructions (auto-load via `applyTo`)
 

@@ -6,6 +6,24 @@ tools: ["codebase", "editFiles", "problems", "search", "usages"]
 
 # New Feature Workflow
 
+## Phase 0 — Requirements
+
+Before loading any context or writing any code, confirm the spec is complete.
+
+Load the [requirements skill](.github/skills/requirements/SKILL.md) and apply the **Definition of Ready checklist**:
+
+- [ ] What the user sees/does is described concretely
+- [ ] At least 2 acceptance criteria written as testable Given/When/Then statements
+- [ ] Loading and error states addressed (even if "N/A")
+- [ ] Data requirements clear — read-only vs. write, persistent vs. ephemeral
+- [ ] Out-of-scope items listed
+
+If any item is unchecked: **ask the user, don't assume**. Use the question banks in the skill to elicit only what is missing.
+
+🚨 **STOP — do not proceed to Phase 1 until the spec is confirmed by the user.**
+
+---
+
 ## Context Loading Phase
 
 Before writing any code:

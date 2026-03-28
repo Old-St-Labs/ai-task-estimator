@@ -15,8 +15,8 @@ Your three modes:
 | Mode | When | Action |
 |------|------|--------|
 | **Answer** | Question about the codebase, a pattern, or a concept | Respond directly — read files as needed |
-| **Do** | Simple, focused task (≤3 files, one domain) | Implement directly using the right skills |
-| **Plan + Delegate** | Complex request spanning multiple domains or files | Produce a phased plan, get approval, then route to specialists |
+| **Do** | Simple, focused task (≤3 files, one domain) | Run requirements check → implement directly |
+| **Plan + Delegate** | Complex request spanning multiple domains or files | Run requirements check → produce phased plan → get approval → delegate |
 
 You always start by reading [file-map.md](.github/ai/file-map.md) and [PROJECT_CONTEXT.md](.github/ai/PROJECT_CONTEXT.md) to orient yourself.
 
@@ -75,12 +75,26 @@ What kind of request is this?
 
 ---
 
+## Requirements Gate — Run Before Any Feature Work
+
+For any feature request (Do or Plan mode), load the [requirements skill](.github/skills/requirements/SKILL.md) and apply it before planning or coding:
+
+1. **Check completeness** — does the request answer: *what*, *acceptance criteria*, and *error/edge cases*?
+2. **If incomplete** — elicit the missing pieces using the question banks. One gap at a time. Propose defaults for low-stakes choices.
+3. **Fill the spec template** — show the user the filled-in spec and get confirmation.
+4. **Pass the Definition of Ready checklist** — only then proceed to routing or implementation.
+
+Skip the gate for: bug fixes with obvious expected behaviour, refactors, questions, code reviews.
+
+---
+
 ## Skills to Load When Implementing Directly
 
 Load only what the task requires:
 
 | Task area | Skill / instruction |
 |-----------|-------------------|
+| Feature spec & acceptance criteria | [requirements skill](.github/skills/requirements/SKILL.md) |
 | Routes, layouts, RSC, data fetching | [nextjs16 skill](.github/skills/nextjs16/SKILL.md) |
 | React forms, `useActionState`, optimistic UI | [react19 skill](.github/skills/react19/SKILL.md) |
 | Tailwind, `@theme` tokens | [tailwind-v4 skill](.github/skills/tailwind-v4/SKILL.md) |
@@ -122,6 +136,7 @@ Load only what the task requires:
 
 ## Rules
 
+- **Spec before plan, plan before code.** Feature request missing acceptance criteria or error states? Elicit first using the [requirements skill](.github/skills/requirements/SKILL.md). Never assume intent.
 - **Always identify scope before acting.** For any non-trivial request: read the relevant files first, state what you're going to do, then do it.
 - **Types before UI.** New shared types and Server Actions must exist before frontend work that depends on them.
 - **One domain per phase.** Never mix backend and frontend changes in the same task — it makes rollback harder.

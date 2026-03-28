@@ -29,6 +29,7 @@ Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS
 | AI setup patterns | [ai-setup skill](.github/skills/ai-setup/SKILL.md) |
 | Token & cost optimization | [token-optimization skill](.github/skills/token-optimization/SKILL.md) |
 | Playwright e2e testing | [playwright skill](.github/skills/playwright/SKILL.md) |
+| Feature requirements & specs | [requirements skill](.github/skills/requirements/SKILL.md) |
 
 ## Agents
 
