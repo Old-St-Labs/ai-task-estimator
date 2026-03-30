@@ -17,6 +17,7 @@
         "esModuleInterop": true,
         "baseUrl": ".",
         "paths": {
+            "@ai-task-estimator/database-service": ["libs/database-service/src/index.ts"],
             "@web-app/*": ["apps/web-app/src/*"],
             "@utils/*": ["libs/utils/src/*"],
             "@dto": ["libs/dto/src/index.ts"]
