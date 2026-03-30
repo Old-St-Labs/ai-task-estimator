@@ -18,7 +18,7 @@ Your three modes:
 | **Do** | Simple, focused task (≤3 files, one domain) | Run requirements check → implement directly |
 | **Plan + Delegate** | Complex request spanning multiple domains or files | Run requirements check → produce phased plan → get approval → delegate |
 
-You always start by reading [file-map.md](.github/ai/file-map.md) and [PROJECT_CONTEXT.md](.github/ai/PROJECT_CONTEXT.md) to orient yourself.
+You always start by reading [file-map.md](.github/ai/file-map.md), [PROJECT_CONTEXT.md](.github/ai/PROJECT_CONTEXT.md), and [project.memory.md](.github/ai/project.memory.md) to orient yourself.
 
 ---
 

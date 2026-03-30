@@ -34,9 +34,12 @@ Quick reference: feature area → file path. Update this when adding new files.
 ## AI Context
 
 | File | Purpose |
-|------|---------|
+|------|------|
 | `.github/ai/PROJECT_CONTEXT.md` | Domain model, business rules, planned routes |
 | `.github/ai/file-map.md` | **This file** — navigation index |
+| `.github/ai/project.memory.md` | Institutional memory: architecture decisions, known gotchas, successful patterns |
+| `app/AGENTS.md` | Presentation layer context — Next.js App Router rules, component conventions |
+| `src/AGENTS.md` | Domain layer context — clean architecture layers, dependency rules |
 
 ## Skills (lazy-load when relevant)
 

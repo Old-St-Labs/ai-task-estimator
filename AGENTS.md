@@ -26,9 +26,22 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 - **Security audit or hardening?** → use `@security`
 - **UX/accessibility review?** → use `@ux`
 
+## Hierarchical Context Discovery
+
+Agents walk up the directory tree and load the nearest `AGENTS.md` — providing domain-specific context without global pollution:
+
+- Editing `app/**` → auto-loads `app/AGENTS.md` (Next.js App Router, component rules)
+- Editing `src/**` → auto-loads `src/AGENTS.md` (clean architecture layers, dependency rules)
+- Any file → root `AGENTS.md` applies project-wide
+
 ## Structure
 
 ```
+AGENTS.md                            ← This file — project-wide context
+app/
+└── AGENTS.md                        ← Presentation layer context (Next.js App Router)
+src/
+└── AGENTS.md                        ← Domain/application/infrastructure layer context
 .github/
 ├── copilot-instructions.md          ← Global rules (auto-loaded, kept short)
 ├── agents/
@@ -59,7 +72,8 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 │   └── playwright/SKILL.md          ← E2e config, POM, locators, test flows
 └── ai/
     ├── PROJECT_CONTEXT.md           ← Domain model & business rules
-    └── file-map.md                  ← File navigation index
+    ├── file-map.md                  ← File navigation index
+    └── project.memory.md            ← Institutional memory: decisions, gotchas, patterns
 ```
 
 ## PROSE Compliance
