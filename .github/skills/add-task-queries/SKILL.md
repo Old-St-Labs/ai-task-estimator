@@ -25,6 +25,7 @@ Format: `<verb>.<noun>.<qualifier>.query.ts`
 | `GET /tasks?title=` | `get.task.by.title.query.ts` |
 | `GET /tasks/by-status` | `list.tasks.by.status.query.ts` |
 | `GET /tasks/by-status-and-assignee` | `list.tasks.by.status.and.assignee.query.ts` |
+| `GET /tasks/search?task=&estimatedHours=&status=` | `list.tasks.query.ts` |
 
 Rules:
 - Use `get.` prefix for single-resource lookups
@@ -155,6 +156,50 @@ export class ListTasksByStatusQuery {
 
 ---
 
+```typescript
+// list.tasks.query.ts
+import { Injectable } from '@nestjs/common';
+import { TaskEstimatorDto, StateStatus } from '@dto';
+import { JsonModel } from '@ai-task-estimator/database-service';
+
+@Injectable()
+export class ListTasksQuery {
+    private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+
+    async execute(filters: {
+        task?: string;
+        estimatedHours?: number;
+        status?: StateStatus;
+    }): Promise<TaskEstimatorDto[]> {
+        const all = await this.model.getAll();
+        return all.filter(t => {
+            if (filters.task && !t.task.toLowerCase().includes(filters.task.toLowerCase())) return false;
+            if (filters.estimatedHours !== undefined && t.estimatedHours !== filters.estimatedHours) return false;
+            if (filters.status && t.status !== filters.status) return false;
+            return true;
+        });
+    }
+}
+```
+
+**Sample response** (`GET /tasks/search?task=login&status=IN_PROGRESS`):
+```json
+[
+  {
+    "taskEstimatorId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "task": "Build login page",
+    "estimatedHours": 8,
+    "status": "IN_PROGRESS",
+    "AIResponse": null
+  }
+]
+```
+
+> All filters are optional and combinable. `task` is matched case-insensitively as a substring. `estimatedHours` is an exact match. `status` must be a valid `StateStatus` enum value.
+> The controller receives `estimatedHours` as a query string and must convert it: `estimatedHours !== undefined ? Number(estimatedHours) : undefined`.
+
+---
+
 ## Two-Phase Workflow — Read This First
 
 The `add-api-endpoints` skill runs **before** this skill and leaves the controller as a skeleton with stub route methods. **This skill completes Phase 2**: it creates the query handler file and then replaces the matching controller stub with real wiring.
@@ -231,5 +276,6 @@ src/app/Task/queries/
 ├── get.task.by.id.query.ts
 ├── get.task.by.title.query.ts
 ├── list.tasks.by.status.query.ts
-└── list.tasks.by.status.and.assignee.query.ts
+├── list.tasks.by.status.and.assignee.query.ts
+└── list.tasks.query.ts
 ```

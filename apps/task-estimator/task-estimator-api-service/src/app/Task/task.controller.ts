@@ -30,6 +30,7 @@ import { GetTaskByIdQuery } from './queries/get.task.by.id.query';
 import { GetTaskByTitleQuery } from './queries/get.task.by.title.query';
 import { ListTasksByStatusQuery } from './queries/list.tasks.by.status.query';
 import { ListTasksByStatusAndAssigneeQuery } from './queries/list.tasks.by.status.and.assignee.query';
+import { ListTasksQuery } from './queries/list.tasks.query';
 import { UpdateTaskHandler } from './commands/update.task.handler';
 import { DeleteTaskHandler } from './commands/delete.task.handler';
 import { CompleteTaskHandler } from './commands/complete.task.handler';
@@ -50,9 +51,29 @@ export class TaskController {
         private readonly getTaskByTitleQuery: GetTaskByTitleQuery,
         private readonly listTasksByStatusQuery: ListTasksByStatusQuery,
         private readonly listTasksByStatusAndAssigneeQuery: ListTasksByStatusAndAssigneeQuery,
+        private readonly listTasksQuery: ListTasksQuery,
     ) {}
 
     // ── STATIC PATHS — declare before dynamic /:taskId routes ─────────────────
+
+    @Get('search')
+    @ApiOperation({ summary: 'Search tasks by name, estimated hours, and/or status' })
+    @ApiQuery({ name: 'task', required: false, description: 'Partial task name to search for', example: 'login' })
+    @ApiQuery({ name: 'estimatedHours', required: false, type: Number, description: 'Filter by estimated hours', example: 8 })
+    @ApiQuery({ name: 'status', required: false, enum: StateStatus, description: 'Filter by status' })
+    @ApiOkResponse({ type: TaskEstimatorDto, isArray: true })
+    @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+    searchTasks(
+        @Query('task') task?: string,
+        @Query('estimatedHours') estimatedHours?: string,
+        @Query('status') status?: StateStatus,
+    ): Promise<TaskEstimatorDto[]> {
+        return this.listTasksQuery.execute({
+            task,
+            estimatedHours: estimatedHours !== undefined ? Number(estimatedHours) : undefined,
+            status,
+        });
+    }
 
     @Get()
     @ApiOperation({ summary: 'Look up a task by title' })

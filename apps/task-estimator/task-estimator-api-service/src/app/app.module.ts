@@ -12,6 +12,7 @@ import { GetTaskByIdQuery } from './Task/queries/get.task.by.id.query';
 import { GetTaskByTitleQuery } from './Task/queries/get.task.by.title.query';
 import { ListTasksByStatusQuery } from './Task/queries/list.tasks.by.status.query';
 import { ListTasksByStatusAndAssigneeQuery } from './Task/queries/list.tasks.by.status.and.assignee.query';
+import { ListTasksQuery } from './Task/queries/list.tasks.query';
 
 @Module({
     imports: [],
@@ -28,6 +29,7 @@ import { ListTasksByStatusAndAssigneeQuery } from './Task/queries/list.tasks.by.
         GetTaskByTitleQuery,
         ListTasksByStatusQuery,
         ListTasksByStatusAndAssigneeQuery,
+        ListTasksQuery,
     ],
 })
 export class AppModule {}
