@@ -40,6 +40,9 @@ Invoke these for complex domain-specific work. Always tell the user which agent 
 
 ## Decision Routing
 
+> **The Requirements Gate runs FIRST for every feature request — before routing, before planning, before any code.**
+> If the spec is incomplete, STOP and ask. Do not proceed past this point until the gate passes.
+
 ```
 What kind of request is this?
 │
@@ -47,7 +50,14 @@ What kind of request is this?
 │   └── Answer directly — read files, explain, done
 │
 ├── Bug fix or small change (1–2 files, one domain)
-│   └── Implement directly — load the relevant skill, make the edit
+│   ├── Is the expected behaviour obvious?
+│   │   ├── Yes → Implement directly
+│   │   └── No  → Treat as feature request; run Requirements Gate
+│
+├── Feature request (any new page, screen, component, or behaviour)
+│   └── ⛔ STOP — run the Requirements Gate before going further
+│       ├── Spec complete? → proceed to routing below
+│       └── Spec incomplete? → ask the next missing question; do NOT route or code
 │
 ├── Code review requested
 │   └── Route to @code-review
@@ -61,30 +71,46 @@ What kind of request is this?
 ├── AI setup (agents, skills, instructions)
 │   └── Route to @ai-setup
 │
-├── Feature touching UI only
+├── Feature touching UI only           [only reached after gate passes]
 │   └── Route to @frontend
 │
-├── Feature touching server/AI/types only
+├── Feature touching server/AI/types only  [only reached after gate passes]
 │   └── Route to @backend
 │
-└── Feature spanning both layers (new action + new UI)
+└── Feature spanning both layers       [only reached after gate passes]
     └── Phase 1 → @backend (types + action first)
         Phase 2 → @frontend (UI consuming that action)
         Gate: confirm Phase 1 is complete before Phase 2 starts
 ```
 
+### Vague Request Detector
+
+A request is **vague** if it names a feature without specifying what the user sees/does, what counts as done, or how errors behave. Examples:
+
+| Vague | Why it's blocked |
+|-------|------------------|
+| "create login screen" | No auth method, no redirect target, no error states |
+| "add dark mode" | No toggle location, no persistence requirement |
+| "build admin panel" | No defined sections, roles, or data |
+| "improve the form" | No specific problem stated |
+
+**If you recognise a vague request: immediately apply the Requirements Gate. Do not infer intent. Do not start planning. Do not write code.**
+
 ---
 
-## Requirements Gate — Run Before Any Feature Work
+## Requirements Gate — Hard Stop Before Any Feature Work
+
+> **This gate is mandatory. It cannot be skipped for feature requests. Producing a plan or writing code before the gate passes is a violation of these rules.**
 
 For any feature request (Do or Plan mode), load the [requirements skill](.github/skills/requirements/SKILL.md) and apply it before planning or coding:
 
 1. **Check completeness** — does the request answer: *what*, *acceptance criteria*, and *error/edge cases*?
-2. **If incomplete** — elicit the missing pieces using the question banks. One gap at a time. Propose defaults for low-stakes choices.
-3. **Fill the spec template** — show the user the filled-in spec and get confirmation.
-4. **Pass the Definition of Ready checklist** — only then proceed to routing or implementation.
+2. **If incomplete → STOP** — do not produce a plan, do not write code, do not route to a specialist. Ask the user the single most important missing question.
+3. **Elicit one gap at a time** — using the question banks in the requirements skill. Propose defaults for low-stakes choices to keep things moving.
+4. **Fill the spec template** — show the user the filled-in spec and get explicit confirmation.
+5. **Pass the Definition of Ready checklist** — only then proceed to routing or implementation.
 
-Skip the gate for: bug fixes with obvious expected behaviour, refactors, questions, code reviews.
+Skip the gate **only** for: bug fixes with obvious expected behaviour, refactors, questions, code reviews.
 
 ---
 

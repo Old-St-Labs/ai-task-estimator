@@ -5,6 +5,8 @@ description: Requirements elicitation framework. Defines how to gather specs, ac
 
 # Requirements Elicitation — AI Task Estimator
 
+> ⛔ **Hard gate:** Do not produce a plan or write any code until the Definition of Ready checklist passes. This applies even to requests that seem simple — feature names are not specs.
+
 ## When to Apply
 
 Run requirements gathering before planning or implementing when the request is missing any of:
@@ -12,7 +14,9 @@ Run requirements gathering before planning or implementing when the request is m
 - At least one testable acceptance criterion
 - How error/edge cases should behave
 
-**Skip for:** bug fixes with obvious expected behaviour, refactors, questions, code reviews, tasks scoped to a single file with clear intent.
+**Skip for:** bug fixes with obvious expected behaviour, refactors, questions, code reviews.
+
+> **Do NOT skip** for requests that name a feature but give no spec — e.g. "create login screen", "add settings page", "build admin panel". Feature names are not specifications.
 
 ---
 
