@@ -74,7 +74,6 @@ Quick reference: feature area → file path. Update this when adding new files.
 | Code Review | `.github/agents/code-review.md` | Read-only audit against project rules; structured findings report |
 | Security | `.github/agents/security.md` | Security audit — OWASP, prompt injection, secrets, input sanitization |
 | UX | `.github/agents/ux.md` | UX/accessibility review, interaction states, design system consistency |
-| Dev *(deprecated)* | `.github/agents/dev.md` | Use `@orchestrator` instead |
 
 ## Planned Routes (not yet built)
 

@@ -40,9 +40,7 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 │   ├── e2e.md                       ← E2e tests, Page Object Model, CI
 │   ├── code-review.md               ← Read-only code audit; severity-ranked findings
 │   ├── security.md                  ← Security audit, OWASP, prompt injection, secrets
-│   ├── ux.md                        ← UX/accessibility review, interaction states
-│   ├── dev.md                       ← DEPRECATED — use @orchestrator
-│   └── playwright.md                ← DEPRECATED — use e2e.md
+│   └── ux.md                        ← UX/accessibility review, interaction states
 ├── instructions/
 │   ├── typescript-strict.instructions.md       ← applyTo: **/*.{ts,tsx}
 │   ├── server-actions.instructions.md          ← applyTo: app/**/actions.ts
