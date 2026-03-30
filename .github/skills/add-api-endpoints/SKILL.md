@@ -178,8 +178,9 @@ export class TaskController {
 When this skill runs, every route method must be a **stub** — no handler injection, no `execute()` call:
 
 ```typescript
-import { Controller, Post, Get, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, HttpException } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Get, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiBody } from '@nestjs/swagger';
+import { CreateTaskEstimator, TaskEstimatorDto } from '@dto';
 
 @ApiTags('task')
 @Controller('v1/tasks')
@@ -188,22 +189,23 @@ export class TaskController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createTask(@Body() body: unknown): Promise<unknown> {
+  @ApiBody({ type: CreateTaskEstimator })
+  createTask(@Body() body: CreateTaskEstimator): Promise<TaskEstimatorDto> {
     // TODO: wire CreateTaskHandler — run add-task-commands skill
-    throw new HttpException('Not implemented', HttpStatus.INTERNAL_SERVER_ERROR);
+    return Promise.resolve({} as TaskEstimatorDto);
   }
 
   @Get(':taskId')
-  getTaskById(@Param('taskId') taskId: string): Promise<unknown> {
+  getTaskById(@Param('taskId') taskId: string): Promise<TaskEstimatorDto> {
     // TODO: wire GetTaskByIdHandler — run add-task-queries skill
-    throw new HttpException('Not implemented', HttpStatus.INTERNAL_SERVER_ERROR);
+    return Promise.resolve({} as TaskEstimatorDto);
   }
 
   // ... remaining stubs follow the same pattern
 }
 ```
 
-> After Phase 1 the controller compiles but every route throws. Run `add-task-commands` or `add-task-queries` next to replace stubs with real wiring.
+> After Phase 1 the controller compiles but every route returns an empty stub. Run `add-task-commands` or `add-task-queries` next to replace stubs with real wiring.
 
 ---
 
@@ -233,21 +235,22 @@ listTasks(@Query() query: ListTasksQuery) {}
 
 ## DTO Boundary Rule
 
-Controllers must **never** return or receive domain entities. Only DTOs (types from `@old-st/contracts`) cross the presentation boundary.
+Controllers must **never** return or receive domain entities. Only DTOs from `libs/dto/src/lib/task-estimator/` cross the presentation boundary.
 
+Available DTOs:
+
+| Import | Use for |
+|---|---|
+| `CreateTaskEstimator` from `create.task-estimator.dto.ts` | `POST` body — omits `taskEstimatorId` and `status` |
+| `TaskEstimatorDto` from `task-estimator.dto.ts` | `PATCH` body, `GET` response |
+| `StateStatus` from `task-estimator.enum.ts` | Enum values: `FAILED`, `COMPLETED`, `IN_PROGRESS` |
+
+Import using the `@dto` path alias — **never use relative `../../` paths for DTOs**:
 ```typescript
-// Correct: controller returns what the application service returns (a DTO)
-@Get(':taskId')
-getTaskById(@Param('taskId') id: string): Promise<TaskResponse> {
-  return this.appService.getTaskById(id);  // service returns DTO
-}
-
-// Wrong: controller must never call a use case directly
-@Get(':taskId')
-getTaskById(@Param('taskId') id: string) {
-  return this.getTaskByIdUseCase.execute(id);  // returns domain entity — forbidden
-}
+import { CreateTaskEstimator, TaskEstimatorDto, StateStatus } from '@dto';
 ```
+
+> The `@dto` alias maps to `libs/dto/src/index.ts` via `tsconfig.base.json`. All DTO symbols are re-exported from that barrel file.
 
 ---
 
@@ -275,7 +278,7 @@ Every endpoint added or modified by this skill **must** be annotated before the 
 | What you added | Required Swagger decorator(s) |
 |---|---|
 | Any route method | `@ApiOperation({ summary })` + success response decorator + `@ApiInternalServerErrorResponse` |
-| `@Body()` parameter | `@ApiBody({ schema: { type: 'object' as const, properties: {...}, required: [...] } })` |
+| `@Body()` parameter | `@ApiBody({ type: CreateTaskEstimator })` — use the DTO class directly, never inline `schema: { type: 'object' as const, ... }` |
 | `@Query()` enum param (status, role) | `@ApiQuery({ name, required: true, enum: [...], description })` |
 | `@Query()` pagination param | `@ApiQuery({ name, required: false, ... })` |
 | `@Param()` path segment | `@ApiParam({ name, description, example })` |

@@ -40,15 +40,18 @@ Rules:
 
 Each file exports one class decorated with `@Injectable()` and an `execute` method. Params match the route inputs (path params + body).
 
+> **DTO import rule:** Always import DTOs from the `@dto` alias. Never use relative `../../` paths.
+
 ```typescript
 // create.task.handler.ts
 import { Injectable } from '@nestjs/common';
+import { CreateTaskEstimator, TaskEstimatorDto, StateStatus } from '@dto';
 
 @Injectable()
 export class CreateTaskHandler {
-    execute(body: unknown): Promise<unknown> {
-        // TODO: implement when Task entity and DTO are ready
-        throw new Error('Not implemented');
+    execute(body: CreateTaskEstimator): Promise<TaskEstimatorDto> {
+        // TODO: implement when Task entity and repository are ready
+        return Promise.resolve({ taskEstimatorId: 'task-1', status: StateStatus.IN_PROGRESS, ...body });
     }
 }
 ```
@@ -56,12 +59,13 @@ export class CreateTaskHandler {
 ```typescript
 // update.task.handler.ts
 import { Injectable } from '@nestjs/common';
+import { TaskEstimatorDto } from '@dto';
 
 @Injectable()
 export class UpdateTaskHandler {
-    execute(taskId: string, body: unknown): Promise<unknown> {
-        // TODO: implement when Task entity and DTO are ready
-        throw new Error('Not implemented');
+    execute(taskId: string, body: TaskEstimatorDto): Promise<TaskEstimatorDto> {
+        // TODO: implement when Task entity and repository are ready
+        return Promise.resolve({ ...body, taskEstimatorId: taskId });
     }
 }
 ```
@@ -74,7 +78,7 @@ import { Injectable } from '@nestjs/common';
 export class DeleteTaskHandler {
     execute(taskId: string): Promise<void> {
         // TODO: implement when Task entity and DTO are ready
-        throw new Error('Not implemented');
+        return Promise.resolve();
     }
 }
 ```
@@ -82,12 +86,13 @@ export class DeleteTaskHandler {
 ```typescript
 // complete.task.handler.ts  (state-transition — no body)
 import { Injectable } from '@nestjs/common';
+import { TaskEstimatorDto, StateStatus } from '@dto';
 
 @Injectable()
 export class CompleteTaskHandler {
-    execute(taskId: string): Promise<unknown> {
-        // TODO: implement when Task entity and DTO are ready
-        throw new Error('Not implemented');
+    execute(taskId: string): Promise<Partial<TaskEstimatorDto>> {
+        // TODO: implement when Task entity and repository are ready
+        return Promise.resolve({ taskEstimatorId: taskId, status: StateStatus.COMPLETED });
     }
 }
 ```
@@ -127,7 +132,7 @@ Every command handler file **must** be connected in all three places. A handler 
 6. Inject the handler into `TaskController` constructor and **replace the stub route method body** with `handler.execute()`
 7. Add a `// TODO: implement when Task entity and DTO are ready` comment if the implementation is pending
 
-> **Stub logic is intentionally temporary.** Once all DTOs under `@old-st/tasks` are defined, return to each handler and replace the `HttpException('Not implemented', ...)` throw with the real implementation. The handler signature (params, return type) should not change — only the body.
+> **Stub logic is intentionally temporary.** DTOs already exist under `libs/dto/src/lib/task-estimator/`. Use `CreateTaskEstimator` for POST body params and `TaskEstimatorDto` for PATCH body params. Once the repository layer is ready, replace the stub `Promise.resolve(...)` with the real implementation. The handler signature (params, return type) should not change — only the body.
 
 > Step 6 is the only step that modifies the controller. The skeleton from Phase 1 already has the correct route decorator, Swagger annotations, and parameter decorators — only the method body changes.
 
@@ -150,13 +155,16 @@ export class AppModule {}
 
 ```typescript
 // task.controller.ts
+import { CreateTaskEstimator } from '@dto';
+
 constructor(
     private readonly createTaskHandler: CreateTaskHandler, // ← inject
 ) {}
 
 @Post()
 @HttpCode(HttpStatus.CREATED)
-createTask(@Body() body: unknown) {
+@ApiBody({ type: CreateTaskEstimator })       // ← use DTO class, not inline schema
+createTask(@Body() body: CreateTaskEstimator) {
     return this.createTaskHandler.execute(body); // ← call execute()
 }
 ```
