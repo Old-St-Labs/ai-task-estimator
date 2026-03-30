@@ -38,8 +38,9 @@ Next.js 16.2.1 (App Router) · React 19 · TypeScript 5 (strict) · Tailwind CSS
 | `@orchestrator` | **Master agent — start here for everything.** Routes, plans, and implements |
 | `@frontend` | UI components, pages, Tailwind styling |
 | `@backend` | Server Actions, AI integration, types |
-| `@dev` | General full-stack tasks |
 | `@refactor` | Improve structure/types/boundaries without changing behaviour |
 | `@ai-setup` | Create/improve agents, skills, instructions, and PROSE compliance |
 | `@e2e` | Write and maintain Playwright e2e tests |
 | `@code-review` | Audit code against project rules; report findings with severity and fix (read-only) |
+| `@security` | Security audit — OWASP, prompt injection, secret exposure, input sanitization |
+| `@ux` | UX/accessibility review, interaction states, design system consistency |

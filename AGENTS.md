@@ -17,12 +17,14 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 - **Planning a feature?** → use `@orchestrator`
 - **Building UI?** → use `@frontend`
 - **Writing Server Actions / AI integration?** → use `@backend`
-- **General coding?** → use `@dev`
+- **General coding?** → use `@orchestrator`
 - **New feature end-to-end?** → use prompt `.github/prompts/new-feature.prompt.md`
 - **Improving existing code structure?** → use `@refactor`
 - **Creating/improving agents, skills, or AI setup?** → use `@ai-setup`
 - **Writing or fixing e2e tests?** → use `@e2e`
 - **Reviewing code quality, security, or patterns?** → use `@code-review`
+- **Security audit or hardening?** → use `@security`
+- **UX/accessibility review?** → use `@ux`
 
 ## Structure
 
@@ -30,15 +32,17 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 .github/
 ├── copilot-instructions.md          ← Global rules (auto-loaded, kept short)
 ├── agents/
-│   ├── orchestrator.md              ← Plans & routes; never writes code
-│   ├── dev.md                       ← General full-stack tasks
+│   ├── orchestrator.md              ← Master agent — single entry point
 │   ├── frontend.md                  ← UI, components, Tailwind
 │   ├── backend.md                   ← Server Actions, AI, types
 │   ├── refactor.md                  ← Structural improvements, no behaviour change
 │   ├── ai-setup.md                  ← Create/improve agents, skills, and PROSE setup
 │   ├── e2e.md                       ← E2e tests, Page Object Model, CI
-│   ├── playwright.md                ← DEPRECATED — use e2e.md
-│   └── code-review.md               ← Read-only code audit; severity-ranked findings
+│   ├── code-review.md               ← Read-only code audit; severity-ranked findings
+│   ├── security.md                  ← Security audit, OWASP, prompt injection, secrets
+│   ├── ux.md                        ← UX/accessibility review, interaction states
+│   ├── dev.md                       ← DEPRECATED — use @orchestrator
+│   └── playwright.md                ← DEPRECATED — use e2e.md
 ├── instructions/
 │   ├── typescript-strict.instructions.md       ← applyTo: **/*.{ts,tsx}
 │   ├── server-actions.instructions.md          ← applyTo: app/**/actions.ts
@@ -52,6 +56,8 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 │   ├── ai-integration/SKILL.md      ← Prompts, sanitization, API, mock engine
 │   ├── refactoring/SKILL.md         ← Extract, type-tighten, dedup, boundary fixes
 │   ├── ai-setup/SKILL.md            ← Writing agents, skills, instructions, PROSE compliance
+│   ├── token-optimization/SKILL.md  ← AI model selection, max_tokens, cost reference
+│   ├── requirements/SKILL.md        ← Feature elicitation, spec template, Definition of Ready
 │   └── playwright/SKILL.md          ← E2e config, POM, locators, test flows
 └── ai/
     ├── PROJECT_CONTEXT.md           ← Domain model & business rules
@@ -65,6 +71,6 @@ This project follows [PROSE](https://danielmeppiel.github.io/awesome-ai-native/d
 | Progressive Disclosure | Skills lazy-loaded by reference; agents load only what's relevant |
 | Reduced Scope | Specialist agents (frontend/backend) scope work to one domain |
 | Orchestrated Composition | Small primitives (instructions + skills + agents) compose |
-| Safety Boundaries | Orchestrator has no `editFiles`; agents have explicit `applyTo` |
+| Safety Boundaries | Specialist agents have explicit `applyTo`; read-only agents have no `editFiles` |
 | Explicit Hierarchy | Global copilot-instructions → domain skills → scoped instructions |
 

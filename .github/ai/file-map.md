@@ -66,13 +66,15 @@ Quick reference: feature area → file path. Update this when adding new files.
 | Agent | Path | Scope |
 |-------|------|-------|
 | Orchestrator | `.github/agents/orchestrator.md` | **Master agent** — single entry point; routes, plans, and implements |
-| Dev | `.github/agents/dev.md` | Full-stack general tasks |
 | Frontend | `.github/agents/frontend.md` | UI components, pages, CSS |
 | Backend | `.github/agents/backend.md` | Server Actions, types, AI integration |
 | Refactor | `.github/agents/refactor.md` | Structural improvements, zero behaviour change |
 | AI Setup | `.github/agents/ai-setup.md` | Create/improve agents, skills, instructions (.github/ only) |
 | E2E | `.github/agents/e2e.md` | E2e tests in `e2e/` and `playwright.config.ts` |
 | Code Review | `.github/agents/code-review.md` | Read-only audit against project rules; structured findings report |
+| Security | `.github/agents/security.md` | Security audit — OWASP, prompt injection, secrets, input sanitization |
+| UX | `.github/agents/ux.md` | UX/accessibility review, interaction states, design system consistency |
+| Dev *(deprecated)* | `.github/agents/dev.md` | Use `@orchestrator` instead |
 
 ## Planned Routes (not yet built)
 
