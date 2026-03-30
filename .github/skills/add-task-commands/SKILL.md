@@ -36,22 +36,45 @@ Rules:
 
 ---
 
+## Database Layer
+
+Every handler that reads or writes data uses `JsonModel` directly from `@ai-task-estimator/database-service`. Instantiate it as a private field — no injection or module required.
+
+```typescript
+private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+```
+
+`JsonModel` exposes these methods:
+
+| Method | Signature | When to use |
+|---|---|---|
+| `create` | `create(entity): Promise<Entity>` | `POST` — build entity with new ID, call create |
+| `update` | `update(partial, key, value): Promise<Entity>` | `PATCH` / state transitions — pass changed fields + lookup key |
+| `delete` | `delete(key, value): Promise<void>` | `DELETE` — pass lookup key + value |
+| `get` | `get(key, value): Promise<Entity \| null>` | lookups by a single field |
+
+---
+
 ## Handler Class Structure
 
-Each file exports one class decorated with `@Injectable()` and an `execute` method. Params match the route inputs (path params + body).
+Each file exports one class decorated with `@Injectable()` and an `execute` method. Params match the route inputs (path params + body). Inject `TaskEstimatorDatabaseService` in the constructor and call the appropriate method.
 
 > **DTO import rule:** Always import DTOs from the `@dto` alias. Never use relative `../../` paths.
+> **DB import rule:** Import `JsonModel` from `@ai-task-estimator/database-service`.
 
 ```typescript
 // create.task.handler.ts
 import { Injectable } from '@nestjs/common';
 import { CreateTaskEstimator, TaskEstimatorDto, StateStatus } from '@dto';
+import { JsonModel } from '@ai-task-estimator/database-service';
 
 @Injectable()
 export class CreateTaskHandler {
+    private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+
     execute(body: CreateTaskEstimator): Promise<TaskEstimatorDto> {
-        // TODO: implement when Task entity and repository are ready
-        return Promise.resolve({ taskEstimatorId: 'task-1', status: StateStatus.IN_PROGRESS, ...body });
+        const entity: TaskEstimatorDto = { ...body, taskEstimatorId: crypto.randomUUID(), status: StateStatus.IN_PROGRESS };
+        return this.model.create(entity);
     }
 }
 ```
@@ -60,12 +83,14 @@ export class CreateTaskHandler {
 // update.task.handler.ts
 import { Injectable } from '@nestjs/common';
 import { TaskEstimatorDto } from '@dto';
+import { JsonModel } from '@ai-task-estimator/database-service';
 
 @Injectable()
 export class UpdateTaskHandler {
-    execute(taskId: string, body: TaskEstimatorDto): Promise<TaskEstimatorDto> {
-        // TODO: implement when Task entity and repository are ready
-        return Promise.resolve({ ...body, taskEstimatorId: taskId });
+    private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+
+    execute(taskId: string, body: Partial<TaskEstimatorDto>): Promise<TaskEstimatorDto> {
+        return this.model.update(body, 'taskEstimatorId', taskId);
     }
 }
 ```
@@ -73,12 +98,15 @@ export class UpdateTaskHandler {
 ```typescript
 // delete.task.handler.ts
 import { Injectable } from '@nestjs/common';
+import { TaskEstimatorDto } from '@dto';
+import { JsonModel } from '@ai-task-estimator/database-service';
 
 @Injectable()
 export class DeleteTaskHandler {
+    private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+
     execute(taskId: string): Promise<void> {
-        // TODO: implement when Task entity and DTO are ready
-        return Promise.resolve();
+        return this.model.delete('taskEstimatorId', taskId);
     }
 }
 ```
@@ -87,12 +115,14 @@ export class DeleteTaskHandler {
 // complete.task.handler.ts  (state-transition — no body)
 import { Injectable } from '@nestjs/common';
 import { TaskEstimatorDto, StateStatus } from '@dto';
+import { JsonModel } from '@ai-task-estimator/database-service';
 
 @Injectable()
 export class CompleteTaskHandler {
-    execute(taskId: string): Promise<Partial<TaskEstimatorDto>> {
-        // TODO: implement when Task entity and repository are ready
-        return Promise.resolve({ taskEstimatorId: taskId, status: StateStatus.COMPLETED });
+    private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+
+    execute(taskId: string): Promise<TaskEstimatorDto> {
+        return this.model.update({ status: StateStatus.COMPLETED }, 'taskEstimatorId', taskId);
     }
 }
 ```
@@ -127,12 +157,9 @@ Every command handler file **must** be connected in all three places. A handler 
 1. Determine the POST / PUT / PATCH / DELETE endpoint being added to `task.controller.ts`
 2. Derive the file name using the naming rules above
 3. Create the file under `src/app/Task/commands/` with `@Injectable()` on the class
-4. Export a single class with an `execute` method whose params match the route inputs
+4. Add `private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto)` and call the appropriate method (`create`, `update`, `delete`, `get`)
 5. Register the handler in `app.module.ts` `providers` array
 6. Inject the handler into `TaskController` constructor and **replace the stub route method body** with `handler.execute()`
-7. Add a `// TODO: implement when Task entity and DTO are ready` comment if the implementation is pending
-
-> **Stub logic is intentionally temporary.** DTOs already exist under `libs/dto/src/lib/task-estimator/`. Use `CreateTaskEstimator` for POST body params and `TaskEstimatorDto` for PATCH body params. Once the repository layer is ready, replace the stub `Promise.resolve(...)` with the real implementation. The handler signature (params, return type) should not change — only the body.
 
 > Step 6 is the only step that modifies the controller. The skeleton from Phase 1 already has the correct route decorator, Swagger annotations, and parameter decorators — only the method body changes.
 

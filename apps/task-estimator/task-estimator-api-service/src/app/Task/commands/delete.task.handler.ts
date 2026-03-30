@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { TaskEstimatorDto } from '@dto';
+import { JsonModel } from '@ai-task-estimator/database-service';
 
 @Injectable()
 export class DeleteTaskHandler {
+    private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+
     execute(taskId: string): Promise<void> {
-        // TODO: implement when Task entity and repository are ready
-        return Promise.resolve();
+        return this.model.delete('taskEstimatorId', taskId);
     }
 }

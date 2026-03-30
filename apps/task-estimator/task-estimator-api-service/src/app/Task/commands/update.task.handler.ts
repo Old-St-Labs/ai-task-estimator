@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { TaskEstimatorDto } from '@dto';
+import { JsonModel } from '@ai-task-estimator/database-service';
 
 @Injectable()
 export class UpdateTaskHandler {
-    execute(taskId: string, body: TaskEstimatorDto): Promise<TaskEstimatorDto> {
-        // TODO: implement when Task entity and repository are ready
-        return Promise.resolve({ ...body, taskEstimatorId: taskId });
+    private readonly model = new JsonModel<TaskEstimatorDto>(TaskEstimatorDto);
+
+    execute(taskId: string, body: Partial<TaskEstimatorDto>): Promise<TaskEstimatorDto> {
+        return this.model.update(body, 'taskEstimatorId', taskId);
     }
 }
