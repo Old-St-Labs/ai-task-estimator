@@ -1,5 +1,5 @@
 ---
-name: manage-diagrams
+name: project-manage-diagrams
 description: "Use when: creating, updating, or reviewing draw.io diagrams for this project. Covers: editing the main AI Task Estimator flow diagram, adding or updating per-service endpoint diagrams for any app under apps/ (excluding web-app), and keeping all diagrams in sync with code changes. Trigger phrases: 'update diagram', 'add diagram', 'diagram for <service>', 'show endpoint flow', 'create drawio', 'sync diagrams'."
 ---
 

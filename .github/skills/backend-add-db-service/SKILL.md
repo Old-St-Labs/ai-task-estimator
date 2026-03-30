@@ -1,5 +1,5 @@
 ---
-name: create-db-service
+name: backend-add-db-service
 description: Create a database service for entities in the system.
 ---
 

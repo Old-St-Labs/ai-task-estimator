@@ -1,5 +1,5 @@
 ---
-name: add-task-queries
+name: backend-add-task-queries
 description: Scaffold a new GET query handler file under src/app/Task/queries/. Use this when adding a new GET endpoint to the TaskController. Enforces the dot-notation file naming convention and handler class structure used in this codebase.
 ---
 

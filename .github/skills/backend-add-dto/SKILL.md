@@ -1,5 +1,5 @@
 ---
-name: add-dto
+name: backend-add-dto
 description: Generate the three DTO files for a new app domain under libs/dto/. Use this when adding a new service domain and you need to scaffold create.{app-name}.dto.ts, {app-name}.dto.ts, and {app-name}.enum.ts. ALWAYS asks the user for the full field layout before creating any file — do not proceed without it.
 ---
 

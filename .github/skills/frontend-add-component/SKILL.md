@@ -1,5 +1,5 @@
 ---
-name: add-storybook-component
+name: frontend-add-component
 description: 'Create and manage Storybook stories for a Vite-built React library under libs/frontend/components/. Use for: setting up Storybook from scratch (only when not already installed), creating CSF3 story files, configuring Tailwind CSS in Storybook, writing interaction tests with play functions, a11y accessibility checks in stories. Components live in libs/frontend/components/src/base/ with co-located .stories.tsx files. Trigger words: storybook, story, stories, component, add component, component story, CSF, play function, addon-a11y, controls, args.'
 ---
 

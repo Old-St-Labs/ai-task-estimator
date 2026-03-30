@@ -1,5 +1,5 @@
 ---
-name: initial-setup
+name: project-setup
 description: "Use when: setting up a new project from the nx-template-v2, converting a bare Next.js app to an Nx monorepo, running initial setup, scaffolding the project structure, or updating root config files to match the template. Fetches reference files from the nx-template-v2 GitHub repo main branch."
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: add-task-commands
+name: backend-add-task-commands
 description: Scaffold a new command handler file under src/app/Task/commands/. Use this when adding a new POST, PUT, PATCH, or DELETE endpoint to the TaskController. Enforces the dot-notation file naming convention and handler class structure used in this codebase.
 ---
 

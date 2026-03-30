@@ -1,5 +1,5 @@
 ---
-name: webapp-integrate-api-endpoint
+name: frontend-integrate-api
 description: 'Integrate a backend API endpoint into the webapp frontend. Use when adding a new API call, creating query/mutation hooks, setting up an API class, or wiring up a new entity to the data-access layer. Covers GET queries, POST/PUT/PATCH/DELETE mutations, AxiosConfig setup, environment variables, DTOs, query keys, and React Query cache updates.'
 argument-hint: 'Describe the endpoint(s) to integrate, or supply NestJS controller file + line numbers'
 ---

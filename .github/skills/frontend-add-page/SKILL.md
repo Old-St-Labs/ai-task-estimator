@@ -1,5 +1,5 @@
 ---
-name: webapp-new-page
+name: frontend-add-page
 description: Add a new page to the Next.js web-app. Use this when creating a new page route. Covers the thin-orchestrator page pattern and updated routing and navigation.
 ---
 

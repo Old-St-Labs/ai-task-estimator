@@ -1,5 +1,5 @@
 ---
-name: add-api-endpoints
+name: backend-add-api-endpoints
 description: Design and implement REST API endpoints in a NestJS controller. Use this when adding new routes, reviewing existing routes, or designing the API surface for a new domain. Enforces industry-standard REST conventions and the specific patterns used in this codebase.
 ---
 
