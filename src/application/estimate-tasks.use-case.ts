@@ -1,10 +1,10 @@
 import type { IEstimatorPort } from "../domain/estimator.port";
-import type { EstimationResult } from "../domain/task";
+import type { EstimationResult, TeamMember } from "../domain/task";
 
 export async function estimateTasksUseCase(
   port: IEstimatorPort,
   userStories: string[],
-  teamMembers: string[]
+  teamMembers: TeamMember[]
 ): Promise<EstimationResult> {
   const tasks = await port.estimate(userStories, teamMembers);
 

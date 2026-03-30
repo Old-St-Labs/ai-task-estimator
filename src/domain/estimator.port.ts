@@ -1,5 +1,5 @@
-import type { Task } from "./task";
+import type { Task, TeamMember } from "./task";
 
 export interface IEstimatorPort {
-  estimate(userStories: string[], teamMembers: string[]): Promise<Task[]>;
+  estimate(userStories: string[], teamMembers: TeamMember[]): Promise<Task[]>;
 }

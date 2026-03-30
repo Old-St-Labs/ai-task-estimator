@@ -1,5 +1,12 @@
 export type TaskType = "FE" | "BE";
 
+export type TeamMemberRole = "FE" | "BE" | "Fullstack";
+
+export type TeamMember = {
+  name: string;
+  role: TeamMemberRole;
+};
+
 export type Task = {
   title: string;
   description: string;

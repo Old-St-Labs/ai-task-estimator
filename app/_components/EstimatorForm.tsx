@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { estimateTasksAction } from "../actions";
 import { TeamMembersInput } from "./TeamMembersInput";
 import { TaskBreakdownView } from "./TaskBreakdownView";
-import type { ActionState } from "../types";
+import type { ActionState, TeamMember } from "../types";
 
 const initialState: ActionState = { status: "idle" };
 
@@ -50,7 +50,7 @@ export function EstimatorForm() {
     estimateTasksAction,
     initialState
   );
-  const [teamMembers, setTeamMembers] = useState<string[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
   return (
     <div className="space-y-8">

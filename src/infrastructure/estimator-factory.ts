@@ -1,5 +1,5 @@
 import type { IEstimatorPort } from "../domain/estimator.port";
-import type { Task } from "../domain/task";
+import type { Task, TeamMember } from "../domain/task";
 
 // ─── Factory ─────────────────────────────────────────────────────────────────
 
@@ -24,7 +24,7 @@ class AiEstimator implements IEstimatorPort {
     private readonly baseUrl: string
   ) {}
 
-  async estimate(userStories: string[], teamMembers: string[]): Promise<Task[]> {
+  async estimate(userStories: string[], teamMembers: TeamMember[]): Promise<Task[]> {
     const prompt = buildPrompt(userStories, teamMembers);
 
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
@@ -80,13 +80,28 @@ class AiEstimator implements IEstimatorPort {
   }
 }
 
-function buildPrompt(userStories: string[], teamMembers: string[]): string {
+function buildPrompt(userStories: string[], teamMembers: TeamMember[]): string {
+  const memberList = teamMembers
+    .map((m) => {
+      const roleLabel =
+        m.role === "FE" ? "Frontend Developer" :
+        m.role === "BE" ? "Backend Developer" :
+        "Fullstack Developer";
+      const constraint =
+        m.role === "FE" ? " — assign FE tasks only" :
+        m.role === "BE" ? " — assign BE tasks only" :
+        " — can receive FE or BE tasks";
+      return `- ${m.name} (${roleLabel}${constraint})`;
+    })
+    .join("\n");
+
   return `Break down the following user stories into specific development tasks for an AI-native team.
 
 User Stories:
 ${userStories.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 
-Team Members: ${teamMembers.join(", ")}
+Team Members:
+${memberList}
 
 Estimation rules — apply these in order:
 1. Start from a realistic baseline for the task type
@@ -97,28 +112,30 @@ Estimation rules — apply these in order:
    - External API integration, auth flows, novel problems → reduce by 10-20%
    - Architecture decisions, database schema design → 0-10% reduction
 3. Minimum 1 hour per task. Maximum 16 hours (split larger tasks).
-4. Assign tasks evenly across team members by name.
-5. Include 2-4 tasks per user story. Prefer specific, implementable tasks over vague ones.
+4. Assignment rule: assign "FE" tasks to Frontend or Fullstack developers only; assign "BE" tasks to Backend or Fullstack developers only. If no matching developer exists for a task type, assign to the developer with the fewest hours.
+5. Distribute workload evenly across eligible developers.
+6. Include 2-4 tasks per user story. Prefer specific, implementable tasks over vague ones.
 
 Respond with exactly this JSON:
 {"tasks":[{"title":"string","description":"string","type":"FE or BE","estimatedHours":number,"assignedTo":"exact name from team","userStory":"original story text"}]}`;
 }
 
-function validateTasks(raw: unknown[], teamMembers: string[]): Task[] {
-  const memberSet = new Set(teamMembers.map((m) => m.toLowerCase()));
+function validateTasks(raw: unknown[], teamMembers: TeamMember[]): Task[] {
+  const memberNames = teamMembers.map((m) => m.name);
+  const memberNameSet = new Set(memberNames.map((n) => n.toLowerCase()));
   return raw
     .filter((t): t is Record<string, unknown> => typeof t === "object" && t !== null)
     .map((t) => {
       const rawAssignee = String(t.assignedTo ?? "").trim();
       const assignedTo =
-        teamMembers.find((m) => m.toLowerCase() === rawAssignee.toLowerCase()) ??
-        teamMembers[0];
+        memberNames.find((n) => n.toLowerCase() === rawAssignee.toLowerCase()) ??
+        memberNames[0] ?? "";
       return {
         title: String(t.title ?? "Untitled Task").slice(0, 120),
         description: String(t.description ?? "").slice(0, 300),
         type: VALID_TYPES.has(String(t.type)) ? (String(t.type) as "FE" | "BE") : "FE",
-        estimatedHours: Math.max(1, Math.min(40, Math.round(Number(t.estimatedHours) || 2))),
-        assignedTo: memberSet.has(rawAssignee.toLowerCase()) ? rawAssignee : assignedTo,
+        estimatedHours: Math.max(1, Math.min(16, Math.round(Number(t.estimatedHours) || 2))),
+        assignedTo: memberNameSet.has(rawAssignee.toLowerCase()) ? rawAssignee : assignedTo,
         userStory: String(t.userStory ?? "").slice(0, 200),
       };
     });
@@ -204,14 +221,19 @@ const FALLBACK_TEMPLATES: TaskTemplate[] = [
 ];
 
 class MockEstimator implements IEstimatorPort {
-  async estimate(userStories: string[], teamMembers: string[]): Promise<Task[]> {
+  async estimate(userStories: string[], teamMembers: TeamMember[]): Promise<Task[]> {
     const tasks: Task[] = [];
     const memberHours: Record<string, number> = {};
-    for (const m of teamMembers) memberHours[m] = 0;
+    for (const m of teamMembers) memberHours[m.name] = 0;
 
-    const pickMember = () =>
-      [...teamMembers].sort((a, b) => (memberHours[a] ?? 0) - (memberHours[b] ?? 0))[0] ??
-      teamMembers[0];
+    const pickMember = (taskType: "FE" | "BE") => {
+      const eligible = teamMembers.filter((m) => m.role === taskType || m.role === "Fullstack");
+      const pool = eligible.length > 0 ? eligible : teamMembers;
+      return (
+        [...pool].sort((a, b) => (memberHours[a.name] ?? 0) - (memberHours[b.name] ?? 0))[0]?.name ??
+        teamMembers[0]?.name ?? ""
+      );
+    };
 
     for (const story of userStories) {
       const lower = story.toLowerCase();
@@ -227,7 +249,7 @@ class MockEstimator implements IEstimatorPort {
       const count = Math.min(matched.length, 2 + Math.floor(story.length / 40));
       for (const template of matched.slice(0, Math.max(2, count))) {
         const hours = Math.max(1, template.hours + Math.floor(Math.random() * 3) - 1);
-        const assignedTo = pickMember();
+        const assignedTo = pickMember(template.type);
         memberHours[assignedTo] = (memberHours[assignedTo] ?? 0) + hours;
         tasks.push({ ...template, estimatedHours: hours, assignedTo, userStory: story });
       }
