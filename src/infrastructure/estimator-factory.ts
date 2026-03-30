@@ -39,7 +39,13 @@ class AiEstimator implements IEstimatorPort {
           {
             role: "system",
             content:
-              "You are a technical project manager. Break down user stories into specific development tasks. Respond with valid JSON only — no markdown.",
+              "You are a technical project manager estimating work for an AI-native development team. " +
+              "The team uses AI coding assistants (GitHub Copilot, agentic workflows) for the majority of implementation. " +
+              "This significantly changes how long tasks take compared to traditional development. " +
+              "Apply AI-adjusted estimates: boilerplate, CRUD, and standard UI patterns take 40-60% less time; " +
+              "logic-heavy, architecture, and integration work takes 20-30% less time; " +
+              "novel problem-solving and external API integration see minimal reduction. " +
+              "Respond with valid JSON only — no markdown, no explanation.",
           },
           { role: "user", content: prompt },
         ],
@@ -75,21 +81,27 @@ class AiEstimator implements IEstimatorPort {
 }
 
 function buildPrompt(userStories: string[], teamMembers: string[]): string {
-  return `Break down the following user stories into specific development tasks.
+  return `Break down the following user stories into specific development tasks for an AI-native team.
 
 User Stories:
 ${userStories.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 
 Team Members: ${teamMembers.join(", ")}
 
-Requirements:
-- Label each task "FE" (frontend/UI) or "BE" (backend/API/database)
-- Estimate hours (integer 1-40), accounting for AI-native development (30-50% faster than traditional)
-- Assign each task to one team member, distributing evenly
-- Include 2-4 tasks per user story
+Estimation rules — apply these in order:
+1. Start from a realistic baseline for the task type
+2. Apply AI-native reduction based on task category:
+   - Boilerplate, scaffolding, standard CRUD, form UI → reduce by 50-60%
+   - Component styling, layout, data fetching patterns → reduce by 40-50%
+   - Business logic, validation, state management → reduce by 20-30%
+   - External API integration, auth flows, novel problems → reduce by 10-20%
+   - Architecture decisions, database schema design → 0-10% reduction
+3. Minimum 1 hour per task. Maximum 16 hours (split larger tasks).
+4. Assign tasks evenly across team members by name.
+5. Include 2-4 tasks per user story. Prefer specific, implementable tasks over vague ones.
 
 Respond with exactly this JSON:
-{"tasks":[{"title":"string","description":"string","type":"FE or BE","estimatedHours":number,"assignedTo":"exact name","userStory":"original story text"}]}`;
+{"tasks":[{"title":"string","description":"string","type":"FE or BE","estimatedHours":number,"assignedTo":"exact name from team","userStory":"original story text"}]}`;
 }
 
 function validateTasks(raw: unknown[], teamMembers: string[]): Task[] {
