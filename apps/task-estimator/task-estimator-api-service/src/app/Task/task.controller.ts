@@ -24,8 +24,12 @@ import {
     ApiConflictResponse,
     ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
-import { CreateTaskEstimator, TaskEstimatorDto } from '@dto';
+import { CreateTaskEstimator, TaskEstimatorDto, StateStatus } from '@dto';
 import { CreateTaskHandler } from './commands/create.task.handler';
+import { GetTaskByIdQuery } from './queries/get.task.by.id.query';
+import { GetTaskByTitleQuery } from './queries/get.task.by.title.query';
+import { ListTasksByStatusQuery } from './queries/list.tasks.by.status.query';
+import { ListTasksByStatusAndAssigneeQuery } from './queries/list.tasks.by.status.and.assignee.query';
 import { UpdateTaskHandler } from './commands/update.task.handler';
 import { DeleteTaskHandler } from './commands/delete.task.handler';
 import { CompleteTaskHandler } from './commands/complete.task.handler';
@@ -42,6 +46,10 @@ export class TaskController {
         private readonly completeTaskHandler: CompleteTaskHandler,
         private readonly reopenTaskHandler: ReopenTaskHandler,
         private readonly estimateTaskHandler: EstimateTaskHandler,
+        private readonly getTaskByIdQuery: GetTaskByIdQuery,
+        private readonly getTaskByTitleQuery: GetTaskByTitleQuery,
+        private readonly listTasksByStatusQuery: ListTasksByStatusQuery,
+        private readonly listTasksByStatusAndAssigneeQuery: ListTasksByStatusAndAssigneeQuery,
     ) {}
 
     // ── STATIC PATHS — declare before dynamic /:taskId routes ─────────────────
@@ -52,9 +60,8 @@ export class TaskController {
     @ApiOkResponse({ type: TaskEstimatorDto })
     @ApiBadRequestResponse({ description: 'Missing or invalid query parameter' })
     @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-    getTaskByTitle(@Query('title') title: string): Promise<TaskEstimatorDto> {
-        // TODO: wire GetTaskByTitleHandler — run add-task-queries skill
-        return Promise.resolve({} as TaskEstimatorDto);
+    getTaskByTitle(@Query('title') title: string): Promise<TaskEstimatorDto | null> {
+        return this.getTaskByTitleQuery.execute(title);
     }
 
     // ── DYNAMIC /:taskId PATHS ─────────────────────────────────────────────────
@@ -76,9 +83,8 @@ export class TaskController {
     @ApiOkResponse({ type: TaskEstimatorDto })
     @ApiNotFoundResponse({ description: 'Task not found' })
     @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-    getTaskById(@Param('taskId') taskId: string): Promise<TaskEstimatorDto> {
-        // TODO: wire GetTaskByIdHandler — run add-task-queries skill
-        return Promise.resolve({} as TaskEstimatorDto);
+    getTaskById(@Param('taskId') taskId: string): Promise<TaskEstimatorDto | null> {
+        return this.getTaskByIdQuery.execute(taskId);
     }
 
     @Patch(':taskId')

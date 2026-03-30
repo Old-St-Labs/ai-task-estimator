@@ -8,6 +8,10 @@ import { DeleteTaskHandler } from './Task/commands/delete.task.handler';
 import { CompleteTaskHandler } from './Task/commands/complete.task.handler';
 import { ReopenTaskHandler } from './Task/commands/reopen.task.handler';
 import { EstimateTaskHandler } from './Task/commands/estimate.task.handler';
+import { GetTaskByIdQuery } from './Task/queries/get.task.by.id.query';
+import { GetTaskByTitleQuery } from './Task/queries/get.task.by.title.query';
+import { ListTasksByStatusQuery } from './Task/queries/list.tasks.by.status.query';
+import { ListTasksByStatusAndAssigneeQuery } from './Task/queries/list.tasks.by.status.and.assignee.query';
 
 @Module({
     imports: [],
@@ -20,6 +24,10 @@ import { EstimateTaskHandler } from './Task/commands/estimate.task.handler';
         CompleteTaskHandler,
         ReopenTaskHandler,
         EstimateTaskHandler,
+        GetTaskByIdQuery,
+        GetTaskByTitleQuery,
+        ListTasksByStatusQuery,
+        ListTasksByStatusAndAssigneeQuery,
     ],
 })
 export class AppModule {}
