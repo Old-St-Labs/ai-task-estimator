@@ -18,7 +18,8 @@
         "baseUrl": ".",
         "paths": {
             "@web-app/*": ["apps/web-app/src/*"],
-            "@utils/*": ["libs/utils/src/*"]
+            "@utils/*": ["libs/utils/src/*"],
+            "@dto": ["libs/dto/src/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]
