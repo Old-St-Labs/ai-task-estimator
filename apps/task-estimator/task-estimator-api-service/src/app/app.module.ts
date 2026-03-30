@@ -13,12 +13,14 @@ import { GetTaskByTitleQuery } from './Task/queries/get.task.by.title.query';
 import { ListTasksByStatusQuery } from './Task/queries/list.tasks.by.status.query';
 import { ListTasksByStatusAndAssigneeQuery } from './Task/queries/list.tasks.by.status.and.assignee.query';
 import { ListTasksQuery } from './Task/queries/list.tasks.query';
+import { OpenAIService } from './openai/openai.service';
 
 @Module({
     imports: [],
     controllers: [AppController, TaskController],
     providers: [
         AppService,
+        OpenAIService,
         CreateTaskHandler,
         UpdateTaskHandler,
         DeleteTaskHandler,

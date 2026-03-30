@@ -51,6 +51,7 @@
     "jwks-rsa": "^3.1.0",
     "next": "14.2.3",
     "nodemailer": "^6.9.15",
+    "openai": "^6.33.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "postcss-loader": "^8.1.1",
