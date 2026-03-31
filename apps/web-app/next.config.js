@@ -5,7 +5,7 @@ const nextConfig = {
     nx: { svgr: false },
     async redirects() {
         return [
-            { source: '/', destination: '/auth/login', permanent: true }
+            { source: '/', destination: '/tasks', permanent: false }
         ]
     },
     webpack(config) {
